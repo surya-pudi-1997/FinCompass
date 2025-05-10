@@ -82,19 +82,31 @@ Below are the core tables required to support the MVP features.
 | status     | TEXT        | Active / Sold               |
 | created_at | TIMESTAMPTZ |                             |
 
+**TransactionCategories**
+
+| Column     | Type      | Notes                                |
+| ---------- | --------- | ------------------------------------ |
+| id         | UUID (PK) | Primary key                          |
+| user_id    | UUID      | Foreign key to Users                 |
+| name       | TEXT      | Category name (e.g., "Groceries")    |
+| type       | TEXT      | Income / Expense / Investment        |
+| icon       | TEXT      | Optional icon identifier             |
+| created_at | TIMESTAMPTZ | Creation timestamp                 |
+| is_system  | BOOLEAN   | True if system default category      |
+
 **Transactions**
 
-| Column     | Type        | Notes                         |
-| ---------- | ----------- | ----------------------------- |
-| id         | UUID (PK)   |                               |
-| user_id    | UUID        |                               |
-| account_id | UUID        | FK to Accounts                |
-| asset_id   | UUID        | Optional FK to Assets         |
-| type       | TEXT        | Income / Expense / Investment |
-| amount     | DECIMAL     |                               |
-| category   | TEXT        | e.g., Groceries, Rent         |
-| note       | TEXT        | Optional description          |
-| timestamp  | TIMESTAMPTZ | When transaction occurred     |
+| Column      | Type        | Notes                         |
+| ----------- | ----------- | ----------------------------- |
+| id          | UUID (PK)   |                               |
+| user_id     | UUID        |                               |
+| account_id  | UUID        | FK to Accounts                |
+| asset_id    | UUID        | Optional FK to Assets         |
+| type        | TEXT        | Income / Expense / Investment |
+| amount      | DECIMAL     |                               |
+| category_id | UUID        | FK to TransactionCategories   |
+| note        | TEXT        | Optional description          |
+| timestamp   | TIMESTAMPTZ | When transaction occurred     |
 
 **Insurance**
 
