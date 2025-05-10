@@ -1,9 +1,9 @@
 // index.js
 import express from "express";
-import userRoutes from "./routes/users.route";
-import accountsRoutes from "./routes/accounts.route";
-import assetsRoutes from "./routes/assets.route";
-import logger from "./config/logger";
+import userRoutes from "./apis/routes/users.route";
+import accountsRoutes from "./apis/routes/accounts.route";
+import assetsRoutes from "./apis/routes/assets.route";
+import logger from "../config/logger";
 
 const app = express();
 const port = 3000;

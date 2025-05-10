@@ -1,4 +1,4 @@
-import { PrismaClient } from "../generated/prisma";
+import { PrismaClient } from "../../../generated/prisma";
 import { CreateAssetDto, UpdateAssetDto } from "@repo/types";
 
 const prisma = new PrismaClient();

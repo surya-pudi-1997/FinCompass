@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { AssetsService } from "../services/assets.service";
-import logger from "../config/logger";
+import logger from "../../../config/logger";
 import {
   CreateAssetDto,
   UpdateAssetDto,
