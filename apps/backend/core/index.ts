@@ -2,6 +2,7 @@
 import express from "express";
 import userRoutes from "./routes/users.route";
 import accountsRoutes from "./routes/accounts.route";
+import assetsRoutes from "./routes/assets.route";
 import logger from "./config/logger";
 
 const app = express();
@@ -29,6 +30,8 @@ app.get("/", (req: express.Request, res: express.Response) => {
 app.use("/user", userRoutes);
 // Use accounts routes
 app.use("/accounts", accountsRoutes);
+// Use assets routes
+app.use("/assets", assetsRoutes);
 
 // Start the server
 app.listen(port, () => {
