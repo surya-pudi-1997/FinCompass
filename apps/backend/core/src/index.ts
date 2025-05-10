@@ -4,6 +4,7 @@ import userRoutes from "./apis/routes/users.route";
 import accountsRoutes from "./apis/routes/accounts.route";
 import assetsRoutes from "./apis/routes/assets.route";
 import transactionsRoutes from "./apis/routes/transactions.routes";
+import categoriesRoutes from "./apis/routes/categories.route";
 import logger from "../config/logger";
 
 const app = express();
@@ -35,6 +36,8 @@ app.use("/accounts", accountsRoutes);
 app.use("/assets", assetsRoutes);
 // Use transactions routes
 app.use("/transactions", transactionsRoutes);
+// Use categories routes
+app.use("/categories", categoriesRoutes);
 
 // Start the server
 app.listen(port, () => {

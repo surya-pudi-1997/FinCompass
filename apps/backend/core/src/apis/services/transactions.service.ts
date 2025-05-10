@@ -10,6 +10,7 @@ export class TransactionsService {
       include: {
         account: true,
         asset: true,
+        category: true,
       },
     });
   }
@@ -20,6 +21,7 @@ export class TransactionsService {
       include: {
         account: true,
         asset: true,
+        category: true,
       },
     });
   }
@@ -33,6 +35,7 @@ export class TransactionsService {
       include: {
         account: true,
         asset: true,
+        category: true,
       },
     });
   }
@@ -44,6 +47,7 @@ export class TransactionsService {
       include: {
         account: true,
         asset: true,
+        category: true,
       },
     });
   }

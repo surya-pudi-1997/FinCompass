@@ -11,7 +11,7 @@ export interface CreateTransactionDto {
   assetId?: string;
   type: TransactionType;
   amount: number;
-  category: string;
+  categoryId: string; // Changed from category: string
   note?: string;
   timestamp: Date;
 }

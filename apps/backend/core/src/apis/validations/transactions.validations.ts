@@ -36,7 +36,12 @@ export const transactionValidation = {
       .withMessage("Amount is required")
       .isNumeric()
       .withMessage("Amount must be a number"),
-    body("category").trim().notEmpty().withMessage("Category is required"),
+    body("categoryId")
+      .trim()
+      .notEmpty()
+      .withMessage("Category ID is required")
+      .isUUID()
+      .withMessage("Invalid category ID format"),
     body("note").optional().trim(),
     body("timestamp")
       .notEmpty()
@@ -75,7 +80,11 @@ export const transactionValidation = {
       .optional()
       .isNumeric()
       .withMessage("Amount must be a number"),
-    body("category").optional().trim(),
+    body("categoryId")
+      .optional()
+      .trim()
+      .isUUID()
+      .withMessage("Invalid category ID format"),
     body("note").optional().trim(),
     body("timestamp")
       .optional()

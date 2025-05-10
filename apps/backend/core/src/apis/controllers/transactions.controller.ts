@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { TransactionsService } from "../services/transactions.service";
+import { CategoriesService } from "../services/categories.service";
 import logger from "../../../config/logger";
 import {
   CreateTransactionDto,
@@ -10,6 +11,7 @@ import {
 } from "@repo/types";
 
 const transactionsService = new TransactionsService();
+const categoriesService = new CategoriesService();
 
 export class TransactionsController {
   async getTransactions(req: Request, res: Response) {
@@ -45,6 +47,15 @@ export class TransactionsController {
     }
 
     try {
+      // Verify that the category exists and belongs to the user
+      const category = await categoriesService.findOne(
+        req.body.categoryId,
+        req.user.userId
+      );
+      if (!category) {
+        return res.status(400).json({ error: "Invalid category" });
+      }
+
       const transactionData: CreateTransactionDto = req.body;
       const transaction = await transactionsService.create(
         req.user.userId,
@@ -64,6 +75,17 @@ export class TransactionsController {
     }
 
     try {
+      // If categoryId is being updated, verify it exists and belongs to the user
+      if (req.body.categoryId) {
+        const category = await categoriesService.findOne(
+          req.body.categoryId,
+          req.user.userId
+        );
+        if (!category) {
+          return res.status(400).json({ error: "Invalid category" });
+        }
+      }
+
       const transactionData: UpdateTransactionDto = req.body;
       const transaction = await transactionsService.update(
         req.params.id,

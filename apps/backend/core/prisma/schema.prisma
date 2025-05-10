@@ -27,6 +27,7 @@ model User {
   accounts         Account[]
   assets           Asset[]
   transactions     Transaction[]
+  categories       TransactionCategory[]
   insurances       Insurance[]
   recurringPayments RecurringPayment[]
   reminders        Reminder[]
@@ -60,23 +61,41 @@ model Asset {
   @@index([userId])
 }
 
+model TransactionCategory {
+  id        String      @id @default(uuid()) @db.Uuid
+  name      String
+  type      String
+  icon      String?
+  isSystem  Boolean     @default(false)
+  userId    String      @db.Uuid
+  user      User        @relation(fields: [userId], references: [id])
+  createdAt DateTime    @default(now()) @db.Timestamptz
+  updatedAt DateTime    @updatedAt @db.Timestamptz
+  transactions Transaction[]
+
+  @@map("transaction_categories")
+  @@index([userId])
+}
+
 model Transaction {
-  id        String    @id @default(uuid()) @db.Uuid
-  userId    String    @db.Uuid
-  accountId String    @db.Uuid
-  assetId   String?   @db.Uuid
-  type      String    // Income / Expense / Investment 
-  amount    Decimal   @db.Decimal
-  category  String
-  note      String?
-  timestamp DateTime  @db.Timestamptz
-  user      User     @relation(fields: [userId], references: [id])
-  account   Account  @relation(fields: [accountId], references: [id])
-  asset     Asset?   @relation(fields: [assetId], references: [id])
+  id          String             @id @default(uuid()) @db.Uuid
+  userId      String             @db.Uuid
+  accountId   String             @db.Uuid
+  assetId     String?            @db.Uuid
+  type        String             // Income / Expense / Investment 
+  amount      Decimal            @db.Decimal
+  categoryId  String             @db.Uuid
+  category    TransactionCategory @relation(fields: [categoryId], references: [id])
+  note        String?
+  timestamp   DateTime           @db.Timestamptz
+  user        User               @relation(fields: [userId], references: [id])
+  account     Account            @relation(fields: [accountId], references: [id])
+  asset       Asset?             @relation(fields: [assetId], references: [id])
 
   @@index([userId])
   @@index([accountId])
   @@index([assetId])
+  @@index([categoryId])
 }
 
 model Insurance {
