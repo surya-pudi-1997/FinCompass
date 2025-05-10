@@ -1,0 +1,13 @@
+{
+  "name": "@repo/tsconfig",
+  "version": "0.0.1",
+  "private": true,
+  "files": [
+    "base.json",
+    "react.json",
+    "node.json"
+  ],
+  "devDependencies": {
+    "@types/jest": "^29.5.14"
+  }
+}

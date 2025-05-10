@@ -1,0 +1,118 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                String            @id @default(uuid()) @db.Uuid
+  email            String            @unique
+  passwordHash      String
+  fullName         String
+  preferredCurrency String
+  createdAt        DateTime          @default(now()) @db.Timestamptz
+  updatedAt        DateTime          @updatedAt @db.Timestamptz
+  isActive         Boolean           @default(true)
+  lastLogin        DateTime?         @db.Timestamptz
+  accounts         Account[]
+  assets           Asset[]
+  transactions     Transaction[]
+  insurances       Insurance[]
+  recurringPayments RecurringPayment[]
+  reminders        Reminder[]
+}
+
+model Account {
+  id            String        @id @default(uuid()) @db.Uuid
+  userId        String        @db.Uuid
+  user          User          @relation(fields: [userId], references: [id])
+  name          String
+  type          String        // Savings, Credit Card, etc.
+  balance       Decimal?      @db.Decimal
+  encryptedData Bytes?       
+  createdAt     DateTime      @default(now()) @db.Timestamptz
+  transactions  Transaction[]
+
+  @@index([userId])
+}
+
+model Asset {
+  id         String        @id @default(uuid()) @db.Uuid
+  userId     String        @db.Uuid
+  name       String
+  type       String        // Real Estate, Vehicle, etc.
+  value      Decimal       @db.Decimal
+  status     String        // Active / Sold
+  createdAt  DateTime      @default(now()) @db.Timestamptz
+  user       User          @relation(fields: [userId], references: [id])
+  transactions Transaction[]
+
+  @@index([userId])
+}
+
+model Transaction {
+  id        String    @id @default(uuid()) @db.Uuid
+  userId    String    @db.Uuid
+  accountId String    @db.Uuid
+  assetId   String?   @db.Uuid
+  type      String    // Income / Expense / Investment
+  amount    Decimal   @db.Decimal
+  category  String
+  note      String?
+  timestamp DateTime  @db.Timestamptz
+  user      User     @relation(fields: [userId], references: [id])
+  account   Account  @relation(fields: [accountId], references: [id])
+  asset     Asset?   @relation(fields: [assetId], references: [id])
+
+  @@index([userId])
+  @@index([accountId])
+  @@index([assetId])
+}
+
+model Insurance {
+  id             String   @id @default(uuid()) @db.Uuid
+  userId         String   @db.Uuid
+  provider       String
+  type           String   // Health / Auto / Life
+  premium        Decimal  @db.Decimal
+  policyDocUrl   String?
+  payoutReceived Boolean  @default(false)
+  createdAt      DateTime @default(now()) @db.Timestamptz
+  user           User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model RecurringPayment {
+  id        String   @id @default(uuid()) @db.Uuid
+  userId    String   @db.Uuid
+  name      String
+  amount    Decimal  @db.Decimal
+  frequency String   // Monthly / Quarterly etc.
+  dueDate   DateTime @db.Date
+  user      User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Reminder {
+  id       String   @id @default(uuid()) @db.Uuid
+  userId   String   @db.Uuid
+  title    String
+  dueDate  DateTime @db.Date
+  category String
+  user     User     @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+

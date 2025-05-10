@@ -1,0 +1,77 @@
+version: '3.8'
+
+services:
+  web:
+    build:
+      context: ./apps/web
+      dockerfile: Dockerfile
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./apps/web:/app
+      - /app/node_modules
+    networks:
+      - app-network
+
+  server:
+    build:
+      context: ./apps/server
+      dockerfile: Dockerfile
+    ports:
+      - "4000:4000"
+    environment:
+      - NODE_ENV=development
+      - PORT=4000
+      - DATABASE_URL=postgresql://postgres:postgres@db:5432/fincompass
+      - JWT_SECRET=your-jwt-secret-key-here
+      - ENCRYPTION_KEY=your-encryption-key-here
+      - CORS_ORIGIN=http://localhost:5173
+      - UPLOAD_DIR=/app/uploads
+    volumes:
+      - ./apps/server:/app
+      - /app/node_modules
+    depends_on:
+      - db
+    networks:
+      - app-network
+
+  chatbot:
+    build:
+      context: ./apps/chatbot
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./apps/chatbot:/app
+    networks:
+      - app-network
+
+  db:
+    image: postgres:14-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=fincompass
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - app-network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - app-network
+
+volumes:
+  postgres_data:
+  redis_data:
+
+networks:
+  app-network:
+    driver: bridge
