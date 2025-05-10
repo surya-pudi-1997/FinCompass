@@ -3,6 +3,7 @@ import express from "express";
 import userRoutes from "./apis/routes/users.route";
 import accountsRoutes from "./apis/routes/accounts.route";
 import assetsRoutes from "./apis/routes/assets.route";
+import transactionsRoutes from "./apis/routes/transactions.routes";
 import logger from "../config/logger";
 
 const app = express();
@@ -32,6 +33,8 @@ app.use("/user", userRoutes);
 app.use("/accounts", accountsRoutes);
 // Use assets routes
 app.use("/assets", assetsRoutes);
+// Use transactions routes
+app.use("/transactions", transactionsRoutes);
 
 // Start the server
 app.listen(port, () => {

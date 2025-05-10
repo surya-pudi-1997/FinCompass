@@ -65,7 +65,7 @@ model Transaction {
   userId    String    @db.Uuid
   accountId String    @db.Uuid
   assetId   String?   @db.Uuid
-  type      String    // Income / Expense / Investment
+  type      String    // Income / Expense / Investment 
   amount    Decimal   @db.Decimal
   category  String
   note      String?
