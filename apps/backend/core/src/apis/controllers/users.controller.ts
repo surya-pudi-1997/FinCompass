@@ -3,7 +3,6 @@ import { validationResult } from "express-validator";
 import { UserService } from "../services/users.service";
 import { AuthenticatedRequest } from "../middleware/auth.middleware";
 import { decrypt, encrypt } from "@repo/utils";
-import logger from "../../../config/logger";
 
 const userService = new UserService();
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "default-key";
@@ -15,7 +14,6 @@ export class UserController {
       if (!errors.isEmpty()) {
         return res.status(400).json({ errors: errors.array() });
       }
-
       // Decrypt sensitive data
       const decryptedPassword = decrypt(
         req.body.password,
