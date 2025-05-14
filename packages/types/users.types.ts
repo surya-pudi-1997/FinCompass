@@ -35,3 +35,15 @@ export interface UserWithoutPassword {
 export interface DeleteUserResponse {
   message: string;
 }
+
+export interface UserResponse {
+  id: string;
+  email: string;
+  fullName: string;
+  preferredCurrency: string;
+  networth?: number;
+  createdAt: Date;
+  updatedAt: Date;
+  isActive: boolean;
+  lastLogin?: Date;
+}

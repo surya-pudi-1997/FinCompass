@@ -1,23 +1,28 @@
-export enum AssetTypeEnum {
-  RealEstate = "Real Estate",
-  Vehicle = "Vehicle",
-  Investment = "Investment",
-  Other = "Other",
-}
-
-export enum AssetStatusEnum {
-  Active = "Active",
-  Sold = "Sold",
-}
-
-export type AssetType = keyof typeof AssetTypeEnum;
-export type AssetStatus = keyof typeof AssetStatusEnum;
+export type AssetStatus = "Active" | "Sold";
+export type AssetType = "Real Estate" | "Vehicle" | "Stock" | "Bond" | "Other";
 
 export interface CreateAssetDto {
   name: string;
   type: AssetType;
-  value: number;
+  bought_value: number;
+  sold_value?: number;
+  expense?: number;
+  income?: number;
   status: AssetStatus;
 }
 
-export interface UpdateAssetDto extends Partial<CreateAssetDto> {}
+export interface UpdateAssetDto {
+  name?: string;
+  type?: AssetType;
+  bought_value?: number;
+  sold_value?: number;
+  expense?: number;
+  income?: number;
+  status?: AssetStatus;
+}
+
+export interface Asset extends CreateAssetDto {
+  id: string;
+  userId: string;
+  createdAt: Date;
+}

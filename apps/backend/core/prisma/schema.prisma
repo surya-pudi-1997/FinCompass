@@ -20,6 +20,7 @@ model User {
   passwordHash      String
   fullName         String
   preferredCurrency String
+  networth         Decimal?          @db.Decimal
   createdAt        DateTime          @default(now()) @db.Timestamptz
   updatedAt        DateTime          @updatedAt @db.Timestamptz
   isActive         Boolean           @default(true)
@@ -29,7 +30,6 @@ model User {
   transactions     Transaction[]
   categories       TransactionCategory[]
   insurances       Insurance[]
-  recurringPayments RecurringPayment[]
   reminders        Reminder[]
 }
 
@@ -48,14 +48,17 @@ model Account {
 }
 
 model Asset {
-  id         String        @id @default(uuid()) @db.Uuid
-  userId     String        @db.Uuid
-  name       String
-  type       String        // Real Estate, Vehicle, etc.
-  value      Decimal       @db.Decimal
-  status     String        // Active / Sold
-  createdAt  DateTime      @default(now()) @db.Timestamptz
-  user       User          @relation(fields: [userId], references: [id])
+  id           String        @id @default(uuid()) @db.Uuid
+  userId       String        @db.Uuid
+  name         String
+  type         String        // Real Estate, Vehicle, etc.
+  bought_value Decimal       @db.Decimal
+  sold_value   Decimal?      @db.Decimal
+  expense      Decimal       @default(0) @db.Decimal
+  income       Decimal       @default(0) @db.Decimal
+  status       String        // Active / Sold
+  createdAt    DateTime      @default(now()) @db.Timestamptz
+  user         User          @relation(fields: [userId], references: [id])
   transactions Transaction[]
 
   @@index([userId])
@@ -108,18 +111,6 @@ model Insurance {
   payoutReceived Boolean  @default(false)
   createdAt      DateTime @default(now()) @db.Timestamptz
   user           User     @relation(fields: [userId], references: [id])
-
-  @@index([userId])
-}
-
-model RecurringPayment {
-  id        String   @id @default(uuid()) @db.Uuid
-  userId    String   @db.Uuid
-  name      String
-  amount    Decimal  @db.Decimal
-  frequency String   // Monthly / Quarterly etc.
-  dueDate   DateTime @db.Date
-  user      User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
 }
