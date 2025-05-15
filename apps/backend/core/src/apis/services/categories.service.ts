@@ -2,7 +2,7 @@ import { PrismaClient } from "../../../generated/prisma";
 import {
   CreateTransactionCategoryDto,
   UpdateTransactionCategoryDto,
-} from "@repo/types";
+} from "@fin-compass/types";
 
 const prisma = new PrismaClient();
 

@@ -8,7 +8,7 @@ import {
   UpdateTransactionDto,
   TransactionTypeEnum,
   TransactionType,
-} from "@repo/types";
+} from "@fin-compass/types";
 
 const transactionsService = new TransactionsService();
 const categoriesService = new CategoriesService();

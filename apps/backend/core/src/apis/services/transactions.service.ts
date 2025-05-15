@@ -1,5 +1,5 @@
 import { PrismaClient } from "../../../generated/prisma";
-import { CreateTransactionDto, UpdateTransactionDto } from "@repo/types";
+import { CreateTransactionDto, UpdateTransactionDto } from "@fin-compass/types";
 import { handleTransactionNetworth } from "../../utils/networth.util";
 import { handleAssetTransaction } from "../../utils/asset.util";
 import logger from "../../../config/logger";

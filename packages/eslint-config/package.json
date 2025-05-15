@@ -1,5 +1,5 @@
 {
-  "name": "@fincompass/eslint-config",
+  "name": "@fin-compass/eslint-config",
   "version": "0.0.1",
   "private": true,
   "main": "index.js",

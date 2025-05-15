@@ -5,7 +5,7 @@ import logger from "../../../config/logger";
 import {
   CreateTransactionCategoryDto,
   UpdateTransactionCategoryDto,
-} from "@repo/types";
+} from "@fin-compass/types";
 
 const categoriesService = new CategoriesService();
 

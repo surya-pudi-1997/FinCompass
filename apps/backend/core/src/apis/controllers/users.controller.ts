@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { UserService } from "../services/users.service";
 import { AuthenticatedRequest } from "../middleware/auth.middleware";
-import { decrypt, encrypt } from "@repo/utils";
+import { decrypt, encrypt } from "@fin-compass/utils";
 
 const userService = new UserService();
 const ENCRYPTION_KEY = process.env.ENCRYPTION_KEY || "default-key";

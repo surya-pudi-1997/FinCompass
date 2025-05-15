@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { AssetTypeEnum, AssetStatusEnum } from "@repo/types";
+import { AssetTypeEnum, AssetStatusEnum } from "@fin-compass/types";
 
 export const assetValidation = {
   create: [

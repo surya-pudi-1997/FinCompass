@@ -9,7 +9,7 @@ import {
   AssetStatusEnum,
   AssetType,
   AssetStatus,
-} from "@repo/types";
+} from "@fin-compass/types";
 
 const assetsService = new AssetsService();
 

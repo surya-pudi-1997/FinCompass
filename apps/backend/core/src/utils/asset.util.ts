@@ -1,5 +1,5 @@
 import { PrismaClient, Prisma } from "../../generated/prisma";
-import { TransactionTypeEnum } from "@repo/types";
+import { TransactionTypeEnum } from "@fin-compass/types";
 
 const prisma = new PrismaClient();
 

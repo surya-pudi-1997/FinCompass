@@ -1,5 +1,5 @@
 import { body } from 'express-validator';
-import { AccountTypeEnum } from '@repo/types';
+import { AccountTypeEnum } from '@fin-compass/types';
 
 export const accountValidation = {
   create: [

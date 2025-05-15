@@ -1,5 +1,5 @@
 import { body } from "express-validator";
-import { TransactionCategoryTypeEnum } from "@repo/types";
+import { TransactionCategoryTypeEnum } from "@fin-compass/types";
 
 export const categoryValidation = {
   create: [

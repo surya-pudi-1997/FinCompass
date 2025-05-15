@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { validationResult } from "express-validator";
 import { AccountsService } from "../services/accounts.service";
 import logger from "../../../config/logger";
-import { CreateAccountDto, UpdateAccountDto } from "@repo/types";
+import { CreateAccountDto, UpdateAccountDto } from "@fin-compass/types";
 
 const accountsService = new AccountsService();
 

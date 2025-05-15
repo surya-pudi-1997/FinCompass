@@ -1,9 +1,8 @@
 {
-  "name": "@repo/utils",
+  "name": "@fin-compass/utils",
   "version": "1.0.0",
   "main": "./src/index.ts",
-  "scripts": {
-  },
+  "scripts": {},
   "keywords": [],
   "author": "",
   "license": "ISC",
@@ -12,6 +11,7 @@
     "crypto-js": "^4.2.0"
   },
   "devDependencies": {
+    "@fin-compass/tsconfig": "^0.0.1",
     "@types/crypto-js": "^4.2.1",
     "typescript": "^5.0.0"
   }

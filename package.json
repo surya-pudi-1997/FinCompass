@@ -1,5 +1,5 @@
 {
-  "name": "fincompass",
+  "name": "fin-compass",
   "private": true,
   "scripts": {
     "build": "turbo run build",
@@ -9,6 +9,7 @@
     "test": "turbo run test"
   },
   "devDependencies": {
+    "@fin-compass/tsconfig": "^0.0.1",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
     "eslint": "^8.0.0",

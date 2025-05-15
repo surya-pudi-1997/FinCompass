@@ -193,3 +193,4 @@ build/
 *.pem
 .vercel
 .turbo
+*storybook.log

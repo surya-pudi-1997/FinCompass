@@ -7,7 +7,7 @@ import {
   LoginResponse,
   UserWithoutPassword,
   DeleteUserResponse,
-} from "@repo/types";
+} from "@fin-compass/types";
 import logger from "../../../config/logger";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
