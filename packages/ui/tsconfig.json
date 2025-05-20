@@ -13,14 +13,7 @@
     "skipLibCheck": true,
     "esModuleInterop": true
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    ".turbo",
-    "coverage"
-  ]
+  "moduleResolution": "bundler",
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "dist", ".turbo", "coverage"]
 }

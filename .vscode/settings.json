@@ -1,5 +1,15 @@
 {
-    "cSpell.words": [
-        "Networth"
-    ]
+  "cSpell.words": ["Networth"],
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "colorize.languages": [
+    "typescript",
+    "javascript",
+    "html",
+    "css",
+    "json",
+    "markdown",
+    "javascriptreact",
+    "typescriptreact"
+  ]
 }

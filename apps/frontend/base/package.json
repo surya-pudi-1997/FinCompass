@@ -10,11 +10,12 @@
     "lint": "eslint \"src/**/*.ts\""
   },
   "dependencies": {
-    "@fin-compass/ui": "*",
+    "@fin-compass/ui": "^0.0.1",
     "@fontsource/roboto": "^5.2.5",
     "lucide-react": "^0.510.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.6.0"
   },
   "devDependencies": {
     "@fin-compass/eslint-config": "*",
