@@ -54,7 +54,7 @@ export class UserController {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({
+        return res.status(200).json({
           status_code: 400,
           status_txt: "Validation error",
           data: { errors: errors.array() },

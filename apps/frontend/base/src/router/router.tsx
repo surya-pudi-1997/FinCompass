@@ -7,7 +7,7 @@ const Landing = lazy(() => import("../pages/landing/Landing"));
 const Login = lazy(() => import("../pages/login/Login"));
 const Signup = lazy(() => import("../pages/signup/Signup"));
 const Home = lazy(() => import("../pages/home/Home"));
-const NotFound = lazy(() => import("../pages/NotFound"));
+const NotFound = lazy(() => import("../pages/error/NotFound"));
 
 const router = createBrowserRouter([
   {
