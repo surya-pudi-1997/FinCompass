@@ -13,10 +13,18 @@ export class CategoriesController {
   async getCategories(req: Request, res: Response) {
     try {
       const categories = await categoriesService.findAll(req.user.userId);
-      res.json(categories);
+      res.json({
+        status_code: 200,
+        status_txt: "Success",
+        data: { categories },
+      });
     } catch (error) {
       logger.error("Error fetching categories:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
@@ -27,19 +35,35 @@ export class CategoriesController {
         req.user.userId
       );
       if (!category) {
-        return res.status(404).json({ error: "Category not found" });
+        return res.status(404).json({
+          status_code: 404,
+          status_txt: "Category not found",
+          data: {},
+        });
       }
-      res.json(category);
+      res.json({
+        status_code: 200,
+        status_txt: "Success",
+        data: { category },
+      });
     } catch (error) {
       logger.error("Error fetching category:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
   async createCategory(req: Request, res: Response) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        status_code: 400,
+        status_txt: "Validation error",
+        data: { errors: errors.array() },
+      });
     }
 
     try {
@@ -48,17 +72,29 @@ export class CategoriesController {
         req.user.userId,
         categoryData
       );
-      res.status(201).json(category);
+      res.status(201).json({
+        status_code: 201,
+        status_txt: "Category created successfully",
+        data: { category },
+      });
     } catch (error) {
       logger.error("Error creating category:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
   async updateCategory(req: Request, res: Response) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        status_code: 400,
+        status_txt: "Validation error",
+        data: { errors: errors.array() },
+      });
     }
 
     try {
@@ -68,20 +104,35 @@ export class CategoriesController {
         req.user.userId,
         categoryData
       );
-      res.json(category);
+      res.json({
+        status_code: 200,
+        status_txt: "Category updated successfully",
+        data: { category },
+      });
     } catch (error) {
       logger.error("Error updating category:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
-
   async deleteCategory(req: Request, res: Response) {
     try {
       await categoriesService.delete(req.params.id, req.user.userId);
-      res.status(204).send();
+      res.status(204).json({
+        status_code: 204,
+        status_txt: "Category deleted successfully",
+        data: { id: req.params.id },
+      });
     } catch (error) {
       logger.error("Error deleting category:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 }

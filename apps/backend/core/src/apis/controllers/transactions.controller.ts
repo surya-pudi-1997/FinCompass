@@ -17,10 +17,18 @@ export class TransactionsController {
   async getTransactions(req: Request, res: Response) {
     try {
       const transactions = await transactionsService.findAll(req.user.userId);
-      res.json(transactions);
+      res.json({
+        status_code: 200,
+        status_txt: "Success",
+        data: { transactions },
+      });
     } catch (error) {
       logger.error("Error fetching transactions:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
@@ -31,29 +39,48 @@ export class TransactionsController {
         req.user.userId
       );
       if (!transaction) {
-        return res.status(404).json({ error: "Transaction not found" });
+        return res.status(404).json({
+          status_code: 404,
+          status_txt: "Transaction not found",
+          data: {},
+        });
       }
-      res.json(transaction);
+      res.json({
+        status_code: 200,
+        status_txt: "Success",
+        data: { transaction },
+      });
     } catch (error) {
       logger.error("Error fetching transaction:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
   async createTransaction(req: Request, res: Response) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        status_code: 400,
+        status_txt: "Validation error",
+        data: { errors: errors.array() },
+      });
     }
 
     try {
-      // Verify that the category exists and belongs to the user
       const category = await categoriesService.findOne(
         req.body.categoryId,
         req.user.userId
       );
       if (!category) {
-        return res.status(400).json({ error: "Invalid category" });
+        return res.status(400).json({
+          status_code: 400,
+          status_txt: "Invalid category",
+          data: {},
+        });
       }
 
       const transactionData: CreateTransactionDto = req.body;
@@ -61,28 +88,43 @@ export class TransactionsController {
         req.user.userId,
         transactionData
       );
-      res.status(201).json(transaction);
+      res.status(201).json({
+        status_code: 201,
+        status_txt: "Transaction created successfully",
+        data: { transaction },
+      });
     } catch (error) {
       logger.error("Error creating transaction:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
   async updateTransaction(req: Request, res: Response) {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.status(400).json({
+        status_code: 400,
+        status_txt: "Validation error",
+        data: { errors: errors.array() },
+      });
     }
 
     try {
-      // If categoryId is being updated, verify it exists and belongs to the user
       if (req.body.categoryId) {
         const category = await categoriesService.findOne(
           req.body.categoryId,
           req.user.userId
         );
         if (!category) {
-          return res.status(400).json({ error: "Invalid category" });
+          return res.status(400).json({
+            status_code: 400,
+            status_txt: "Invalid category",
+            data: {},
+          });
         }
       }
 
@@ -92,20 +134,35 @@ export class TransactionsController {
         req.user.userId,
         transactionData
       );
-      res.json(transaction);
+      res.json({
+        status_code: 200,
+        status_txt: "Transaction updated successfully",
+        data: { transaction },
+      });
     } catch (error) {
       logger.error("Error updating transaction:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
-
   async deleteTransaction(req: Request, res: Response) {
     try {
       await transactionsService.delete(req.params.id, req.user.userId);
-      res.status(204).send();
+      res.status(204).json({
+        status_code: 204,
+        status_txt: "Transaction deleted successfully",
+        data: { id: req.params.id },
+      });
     } catch (error) {
       logger.error("Error deleting transaction:", error);
-      res.status(500).json({ error: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 }

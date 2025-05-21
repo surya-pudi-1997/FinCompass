@@ -12,7 +12,11 @@ export class UserController {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+          status_code: 400,
+          status_txt: "Validation error",
+          data: { errors: errors.array() },
+        });
       }
       // Decrypt sensitive data
       const decryptedPassword = decrypt(
@@ -25,12 +29,24 @@ export class UserController {
       };
 
       const user = await userService.createUser(userData);
-      res.status(201).json(user);
+      res.status(201).json({
+        status_code: 201,
+        status_txt: "User created successfully",
+        data: { user },
+      });
     } catch (error: any) {
       if (error.message === "User already exists") {
-        return res.status(409).json({ message: error.message });
+        return res.status(409).json({
+          status_code: 409,
+          status_txt: error.message,
+          data: {},
+        });
       }
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
@@ -38,7 +54,11 @@ export class UserController {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+          status_code: 400,
+          status_txt: "Validation error",
+          data: { errors: errors.array() },
+        });
       }
 
       // Decrypt login credentials
@@ -49,12 +69,24 @@ export class UserController {
       const { email } = req.body;
 
       const result = await userService.login(email, decryptedPassword);
-      res.json(result);
+      res.json({
+        status_code: 200,
+        status_txt: "Login successful",
+        data: result,
+      });
     } catch (error: any) {
       if (error.message === "Invalid credentials") {
-        return res.status(401).json({ message: error.message });
+        return res.status(401).json({
+          status_code: 401,
+          status_txt: error.message,
+          data: {},
+        });
       }
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
@@ -62,16 +94,32 @@ export class UserController {
     try {
       const userId = req.user?.userId;
       if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({
+          status_code: 401,
+          status_txt: "Unauthorized",
+          data: {},
+        });
       }
 
       const user = await userService.getUserById(userId);
-      res.json(user);
+      res.json({
+        status_code: 200,
+        status_txt: "Success",
+        data: { user },
+      });
     } catch (error: any) {
       if (error.message === "User not found") {
-        return res.status(404).json({ message: error.message });
+        return res.status(404).json({
+          status_code: 404,
+          status_txt: error.message,
+          data: {},
+        });
       }
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
@@ -79,21 +127,41 @@ export class UserController {
     try {
       const userId = req.user?.userId;
       if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({
+          status_code: 401,
+          status_txt: "Unauthorized",
+          data: {},
+        });
       }
 
       const errors = validationResult(req);
       if (!errors.isEmpty()) {
-        return res.status(400).json({ errors: errors.array() });
+        return res.status(400).json({
+          status_code: 400,
+          status_txt: "Validation error",
+          data: { errors: errors.array() },
+        });
       }
 
       const user = await userService.updateUser(userId, req.body);
-      res.json(user);
+      res.json({
+        status_code: 200,
+        status_txt: "Profile updated successfully",
+        data: { user },
+      });
     } catch (error: any) {
       if (error.message === "User not found") {
-        return res.status(404).json({ message: error.message });
+        return res.status(404).json({
+          status_code: 404,
+          status_txt: error.message,
+          data: {},
+        });
       }
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 
@@ -101,16 +169,32 @@ export class UserController {
     try {
       const userId = req.user?.userId;
       if (!userId) {
-        return res.status(401).json({ message: "Unauthorized" });
+        return res.status(401).json({
+          status_code: 401,
+          status_txt: "Unauthorized",
+          data: {},
+        });
       }
 
       const result = await userService.deleteUser(userId);
-      res.json(result);
+      res.json({
+        status_code: 200,
+        status_txt: "Account deleted successfully",
+        data: result,
+      });
     } catch (error: any) {
       if (error.message === "User not found") {
-        return res.status(404).json({ message: error.message });
+        return res.status(404).json({
+          status_code: 404,
+          status_txt: error.message,
+          data: {},
+        });
       }
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
     }
   }
 }
