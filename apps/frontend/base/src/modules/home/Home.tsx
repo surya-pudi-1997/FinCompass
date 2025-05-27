@@ -1,8 +1,11 @@
+import { useAuthStore } from "../../store/useAuthStore";
 import { Box, Typography, Button } from "@fin-compass/ui";
 import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const navigate = useNavigate();
+  const store = useAuthStore((state) => state);
+  console.log("Store state:", store);
 
   const handleLogout = () => {
     // TODO: Implement logout logic

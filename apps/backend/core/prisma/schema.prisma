@@ -1,9 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
   output   = "../generated/prisma"
@@ -15,33 +9,33 @@ datasource db {
 }
 
 model User {
-  id                String            @id @default(uuid()) @db.Uuid
-  email            String            @unique
+  id                String                @id @default(uuid()) @db.Uuid
+  email             String                @unique
   passwordHash      String
-  fullName         String
+  fullName          String
   preferredCurrency String
-  networth         Decimal?          @db.Decimal
-  createdAt        DateTime          @default(now()) @db.Timestamptz
-  updatedAt        DateTime          @updatedAt @db.Timestamptz
-  isActive         Boolean           @default(true)
-  lastLogin        DateTime?         @db.Timestamptz
-  accounts         Account[]
-  assets           Asset[]
-  transactions     Transaction[]
-  categories       TransactionCategory[]
-  insurances       Insurance[]
-  reminders        Reminder[]
+  networth          Decimal?              @db.Decimal
+  createdAt         DateTime              @default(now()) @db.Timestamptz(6)
+  updatedAt         DateTime              @updatedAt @db.Timestamptz(6)
+  isActive          Boolean               @default(true)
+  lastLogin         DateTime?             @db.Timestamptz(6)
+  accounts          Account[]
+  assets            Asset[]
+  insurances        Insurance[]
+  reminders         Reminder[]
+  transactions      Transaction[]
+  categories        TransactionCategory[]
 }
 
 model Account {
   id            String        @id @default(uuid()) @db.Uuid
   userId        String        @db.Uuid
-  user          User          @relation(fields: [userId], references: [id])
   name          String
-  type          String        // Savings, Credit Card, etc.
+  type          String
   balance       Decimal?      @db.Decimal
-  encryptedData Bytes?       
-  createdAt     DateTime      @default(now()) @db.Timestamptz
+  encryptedData Bytes?
+  createdAt     DateTime      @default(now()) @db.Timestamptz(6)
+  user          User          @relation(fields: [userId], references: [id])
   transactions  Transaction[]
 
   @@index([userId])
@@ -51,13 +45,13 @@ model Asset {
   id           String        @id @default(uuid()) @db.Uuid
   userId       String        @db.Uuid
   name         String
-  type         String        // Real Estate, Vehicle, etc.
+  type         String
   bought_value Decimal       @db.Decimal
   sold_value   Decimal?      @db.Decimal
   expense      Decimal       @default(0) @db.Decimal
   income       Decimal       @default(0) @db.Decimal
-  status       String        // Active / Sold
-  createdAt    DateTime      @default(now()) @db.Timestamptz
+  status       String
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
   user         User          @relation(fields: [userId], references: [id])
   transactions Transaction[]
 
@@ -65,35 +59,35 @@ model Asset {
 }
 
 model TransactionCategory {
-  id        String      @id @default(uuid()) @db.Uuid
-  name      String
-  type      String
-  icon      String?
-  isSystem  Boolean     @default(false)
-  userId    String      @db.Uuid
-  user      User        @relation(fields: [userId], references: [id])
-  createdAt DateTime    @default(now()) @db.Timestamptz
-  updatedAt DateTime    @updatedAt @db.Timestamptz
+  id           String        @id @default(uuid()) @db.Uuid
+  name         String
+  type         String
+  icon         String?
+  isSystem     Boolean       @default(false)
+  userId       String        @db.Uuid
+  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
+  updatedAt    DateTime      @updatedAt @db.Timestamptz(6)
   transactions Transaction[]
+  user         User          @relation(fields: [userId], references: [id])
 
-  @@map("transaction_categories")
   @@index([userId])
+  @@map("transaction_categories")
 }
 
 model Transaction {
-  id          String             @id @default(uuid()) @db.Uuid
-  userId      String             @db.Uuid
-  accountId   String             @db.Uuid
-  assetId     String?            @db.Uuid
-  type        String             // Income / Expense / Investment 
-  amount      Decimal            @db.Decimal
-  categoryId  String             @db.Uuid
-  category    TransactionCategory @relation(fields: [categoryId], references: [id])
-  note        String?
-  timestamp   DateTime           @db.Timestamptz
-  user        User               @relation(fields: [userId], references: [id])
-  account     Account            @relation(fields: [accountId], references: [id])
-  asset       Asset?             @relation(fields: [assetId], references: [id])
+  id         String              @id @default(uuid()) @db.Uuid
+  userId     String              @db.Uuid
+  accountId  String              @db.Uuid
+  assetId    String?             @db.Uuid
+  type       String
+  amount     Decimal             @db.Decimal
+  categoryId String              @db.Uuid
+  note       String?
+  timestamp  DateTime            @db.Timestamptz(6)
+  account    Account             @relation(fields: [accountId], references: [id])
+  asset      Asset?              @relation(fields: [assetId], references: [id])
+  category   TransactionCategory @relation(fields: [categoryId], references: [id])
+  user       User                @relation(fields: [userId], references: [id])
 
   @@index([userId])
   @@index([accountId])
@@ -105,11 +99,11 @@ model Insurance {
   id             String   @id @default(uuid()) @db.Uuid
   userId         String   @db.Uuid
   provider       String
-  type           String   // Health / Auto / Life
+  type           String
   premium        Decimal  @db.Decimal
   policyDocUrl   String?
   payoutReceived Boolean  @default(false)
-  createdAt      DateTime @default(now()) @db.Timestamptz
+  createdAt      DateTime @default(now()) @db.Timestamptz(6)
   user           User     @relation(fields: [userId], references: [id])
 
   @@index([userId])
@@ -125,4 +119,3 @@ model Reminder {
 
   @@index([userId])
 }
-

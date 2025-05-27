@@ -20,20 +20,11 @@ interface AuthState {
   setAuth: (user: User, token: string) => void;
   error: {
     login: string | null;
-    signup: {
-      email: string | null;
-      password: string | null;
-      confirmPassword: string | null;
-      fullName: string | null;
-      preferredCurrency: string | null;
-    };
+    signup: string | null;
   };
   clearAuth: () => void;
   setLoginError: (error: string | null) => void;
-  setSignupError: (
-    field: keyof AuthState["error"]["signup"],
-    error: string | null
-  ) => void;
+  setSignupError: (error: string | null) => void;
   clearErrors: () => void;
 }
 
@@ -45,13 +36,7 @@ export const useAuthStore = create<AuthState>()(
       isAuthenticated: false,
       error: {
         login: null,
-        signup: {
-          email: null,
-          password: null,
-          confirmPassword: null,
-          fullName: null,
-          preferredCurrency: null,
-        },
+        signup: null,
       },
       setAuth: (user: User, token: string) =>
         set({ user, token, isAuthenticated: true }),
@@ -60,30 +45,18 @@ export const useAuthStore = create<AuthState>()(
         set((state) => ({
           error: { ...state.error, login: error },
         })),
-      setSignupError: (
-        field: keyof AuthState["error"]["signup"],
-        error: string | null
-      ) =>
+      setSignupError: (error: string | null) =>
         set((state) => ({
           error: {
             ...state.error,
-            signup: {
-              ...state.error.signup,
-              [field]: error,
-            },
+            signup: error,
           },
         })),
       clearErrors: () =>
         set({
           error: {
             login: null,
-            signup: {
-              email: null,
-              password: null,
-              confirmPassword: null,
-              fullName: null,
-              preferredCurrency: null,
-            },
+            signup: null,
           },
         }),
     }),

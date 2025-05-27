@@ -44,6 +44,7 @@
     "@fontsource/roboto": "^5.2.5",
     "@mui/material": "^7.1.0",
     "axios": "^1.9.0",
+    "lucide-react": "^0.511.0",
     "motion": "^12.11.3",
     "react-router-dom": "^6.30.0"
   }

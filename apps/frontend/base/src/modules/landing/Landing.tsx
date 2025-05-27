@@ -16,7 +16,9 @@ const Landing = () => {
         gap: 4,
       }}
     >
-      <Typography variant="h2">Welcome to FinCompass</Typography>
+      <Typography variant="h2" align="center">
+        Welcome to FinCompass
+      </Typography>
       <Typography variant="h5" align="center">
         Your personal finance management companion
       </Typography>

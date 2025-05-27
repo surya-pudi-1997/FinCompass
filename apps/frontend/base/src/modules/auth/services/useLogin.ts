@@ -1,6 +1,7 @@
 import { useApiCall } from "../../../hooks/useApiCall";
 import { useAuthStore } from "../../../store/useAuthStore";
 import { LoginInput } from "@fin-compass/types";
+import { useNavigate } from "react-router-dom";
 
 interface LoginResponse {
   data: {
@@ -24,6 +25,7 @@ export const useLogin = () => {
   const setAuth = useAuthStore((state) => state.setAuth);
   const setLoginError = useAuthStore((state) => state.setLoginError);
   const clearLoginError = useAuthStore((state) => state.clearErrors);
+  const navigate = useNavigate();
 
   const defaultFallback = () => {
     setLoginError("An error occurred during login");
@@ -37,6 +39,7 @@ export const useLogin = () => {
         const user = response.data.user;
         const token = response.data.token;
         setAuth(user, token);
+        navigate("/home"); // Redirect to home page after successful login
       },
     },
     {

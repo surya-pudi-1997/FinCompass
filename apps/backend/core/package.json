@@ -7,7 +7,9 @@
     "build": "tsc",
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma": "prisma",
-    "prisma:generate": "prisma generate"
+    "prisma:generate": "prisma generate",
+    "seed:categories": "ts-node src/scripts/seed-categories.ts",
+    "seed:accounts": "ts-node src/scripts/seed-accounts.ts"
   },
   "keywords": [],
   "author": "",
@@ -19,7 +21,9 @@
     "@types/express": "^5.0.1",
     "@types/jsonwebtoken": "^9.0.9",
     "@types/node": "^22.15.3",
+    "axios": "^1.9.0",
     "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
     "prisma": "^6.7.0",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.3"
@@ -30,7 +34,6 @@
     "@prisma/client": "^6.7.0",
     "bcrypt": "^5.1.1",
     "express-validator": "^7.2.1",
-    "jsonwebtoken": "^9.0.2",
     "winston": "^3.17.0"
   }
 }

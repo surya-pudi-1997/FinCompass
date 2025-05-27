@@ -5,8 +5,6 @@ import logger from "../../../config/logger";
 import {
   CreateAssetDto,
   UpdateAssetDto,
-  AssetTypeEnum,
-  AssetStatusEnum,
   AssetType,
   AssetStatus,
 } from "@fin-compass/types";

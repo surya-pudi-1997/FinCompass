@@ -3,11 +3,11 @@ import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import { LOGIN, LANDING, SIGNUP, HOME } from "./routes";
 import Layout from "../components/Layout";
 
-const Landing = lazy(() => import("../pages/landing/Landing"));
-const Login = lazy(() => import("../pages/login/Login"));
-const Signup = lazy(() => import("../pages/signup/Signup"));
-const Home = lazy(() => import("../pages/home/Home"));
-const NotFound = lazy(() => import("../pages/error/NotFound"));
+const Landing = lazy(() => import("../modules/landing/Landing"));
+const Login = lazy(() => import("../modules/auth/views/Login"));
+const Signup = lazy(() => import("../modules/auth/views/Signup"));
+const Home = lazy(() => import("../modules/home/Home"));
+const NotFound = lazy(() => import("../components/error/NotFound"));
 
 const router = createBrowserRouter([
   {
