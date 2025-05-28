@@ -167,7 +167,7 @@ export class UserController {
 
   async deleteAccount(req: AuthenticatedRequest, res: Response) {
     try {
-      const userId = req.user?.userId;
+      const userId = req.params.id;
       if (!userId) {
         return res.status(401).json({
           status_code: 401,
@@ -190,6 +190,23 @@ export class UserController {
           data: {},
         });
       }
+      res.status(500).json({
+        status_code: 500,
+        status_txt: "Internal server error",
+        data: {},
+      });
+    }
+  }
+
+  async getAllUsers(req: Request, res: Response) {
+    try {
+      const users = await userService.getAllUsers();
+      res.json({
+        status_code: 200,
+        status_txt: "Success",
+        data: { users },
+      });
+    } catch (error: any) {
       res.status(500).json({
         status_code: 500,
         status_txt: "Internal server error",

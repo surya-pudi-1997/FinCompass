@@ -165,4 +165,20 @@ export class UserService {
       throw error;
     }
   }
+
+  async getAllUsers(): Promise<UserWithoutPassword[]> {
+    logger.debug("Fetching all users");
+    try {
+      const users = await prisma.user.findMany();
+      return users.map((user) => {
+        const { passwordHash: _, ...userWithoutPassword } = user;
+        return userWithoutPassword;
+      });
+    } catch (error) {
+      logger.error("Error fetching all users", {
+        error: error instanceof Error ? error.message : "Unknown error",
+      });
+      throw error;
+    }
+  }
 }

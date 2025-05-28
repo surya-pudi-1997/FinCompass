@@ -1,3 +1,4 @@
+import logger from "../../config/logger";
 import { PrismaClient, Prisma } from "../../generated/prisma";
 import { TransactionTypeEnum } from "@fin-compass/types";
 
@@ -12,6 +13,26 @@ export async function updateNetworth(
   const client = tx || prisma;
   try {
     const updateAmount = new Prisma.Decimal(amount);
+
+    // Check if networth is NULL and initialize to 0 if necessary
+    const currentUser = await client.user.findUnique({
+      where: { id: userId },
+      select: { networth: true },
+    });
+
+    if (!currentUser) {
+      logger.error(`User with ID ${userId} not found during networth update.`);
+      throw new Error(`User with ID ${userId} not found.`);
+    }
+
+    if (currentUser.networth === null) {
+      await client.user.update({
+        where: { id: userId },
+        data: { networth: new Prisma.Decimal(0) }, // Initialize with Prisma.Decimal(0)
+      });
+    }
+
+    // Perform the increment or decrement operation
     await client.user.update({
       where: { id: userId },
       data: {

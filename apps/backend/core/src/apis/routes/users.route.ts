@@ -22,6 +22,11 @@ router.post(
   (req: Request, res: Response, next: NextFunction) =>
     void userController.login(req, res)
 );
+router.get(
+  "/all",
+  (req: Request, res: Response, next: NextFunction) =>
+    void userController.getAllUsers(req, res)
+);
 
 // Protected routes - require authentication
 router.get(
@@ -40,7 +45,7 @@ router.put(
 );
 
 router.delete(
-  "/remove",
+  "/remove/:id",
   authenticate,
   (req: Request, res: Response, next: NextFunction) =>
     void userController.deleteAccount(req as AuthenticatedRequest, res)
