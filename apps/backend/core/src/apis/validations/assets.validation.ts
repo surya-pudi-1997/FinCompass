@@ -1,5 +1,14 @@
 import { body } from "express-validator";
-import { AssetTypeEnum, AssetStatusEnum } from "@fin-compass/types";
+
+// Define the valid values based on your type unions
+const VALID_ASSET_TYPES: string[] = [
+  "Real Estate",
+  "Vehicle",
+  "Stock",
+  "Bond",
+  "Other",
+];
+const VALID_ASSET_STATUSES: string[] = ["Active", "Sold"];
 
 export const assetValidation = {
   create: [
@@ -9,36 +18,48 @@ export const assetValidation = {
       .notEmpty()
       .withMessage("Asset type is required")
       .customSanitizer((value: string) => {
-        // Find the matching enum key case-insensitively and return the correct casing
-        const match = Object.entries(AssetTypeEnum).find(
-          ([key]) => key.toLowerCase() === value.toLowerCase()
+        // Find the matching type case-insensitively and return the correct casing
+        const match = VALID_ASSET_TYPES.find(
+          (type) => type.toLowerCase() === value.toLowerCase()
         );
-        return match ? match[0] : value;
+        return match || value;
       })
       .custom((value: string) => {
-        if (!Object.keys(AssetTypeEnum).includes(value)) {
+        if (!VALID_ASSET_TYPES.includes(value)) {
           throw new Error("Invalid asset type");
         }
         return true;
       }),
-    body("value")
+    body("bought_value")
       .notEmpty()
-      .withMessage("Asset value is required")
+      .withMessage("Asset bought value is required")
       .isNumeric()
-      .withMessage("Value must be a number"),
+      .withMessage("Bought value must be a number"),
+    body("sold_value")
+      .optional()
+      .isNumeric()
+      .withMessage("Sold value must be a number"),
+    body("expense")
+      .optional()
+      .isNumeric()
+      .withMessage("Expense must be a number"),
+    body("income")
+      .optional()
+      .isNumeric()
+      .withMessage("Income must be a number"),
     body("status")
       .trim()
       .notEmpty()
       .withMessage("Asset status is required")
       .customSanitizer((value: string) => {
-        // Find the matching enum key case-insensitively and return the correct casing
-        const match = Object.entries(AssetStatusEnum).find(
-          ([key]) => key.toLowerCase() === value.toLowerCase()
+        // Find the matching status case-insensitively and return the correct casing
+        const match = VALID_ASSET_STATUSES.find(
+          (status) => status.toLowerCase() === value.toLowerCase()
         );
-        return match ? match[0] : value;
+        return match || value;
       })
       .custom((value: string) => {
-        if (!Object.keys(AssetStatusEnum).includes(value)) {
+        if (!VALID_ASSET_STATUSES.includes(value)) {
           throw new Error("Invalid asset status");
         }
         return true;
@@ -55,29 +76,44 @@ export const assetValidation = {
       .optional()
       .trim()
       .customSanitizer((value: string) => {
-        const match = Object.entries(AssetTypeEnum).find(
-          ([key]) => key.toLowerCase() === value.toLowerCase()
+        const match = VALID_ASSET_TYPES.find(
+          (type) => type.toLowerCase() === value.toLowerCase()
         );
-        return match ? match[0] : value;
+        return match || value;
       })
       .custom((value: string) => {
-        if (!Object.keys(AssetTypeEnum).includes(value)) {
+        if (!VALID_ASSET_TYPES.includes(value)) {
           throw new Error("Invalid asset type");
         }
         return true;
       }),
-    body("value").optional().isNumeric().withMessage("Value must be a number"),
+    body("bought_value")
+      .optional()
+      .isNumeric()
+      .withMessage("Bought value must be a number"),
+    body("sold_value")
+      .optional()
+      .isNumeric()
+      .withMessage("Sold value must be a number"),
+    body("expense")
+      .optional()
+      .isNumeric()
+      .withMessage("Expense must be a number"),
+    body("income")
+      .optional()
+      .isNumeric()
+      .withMessage("Income must be a number"),
     body("status")
       .optional()
       .trim()
       .customSanitizer((value: string) => {
-        const match = Object.entries(AssetStatusEnum).find(
-          ([key]) => key.toLowerCase() === value.toLowerCase()
+        const match = VALID_ASSET_STATUSES.find(
+          (status) => status.toLowerCase() === value.toLowerCase()
         );
-        return match ? match[0] : value;
+        return match || value;
       })
       .custom((value: string) => {
-        if (!Object.keys(AssetStatusEnum).includes(value)) {
+        if (!VALID_ASSET_STATUSES.includes(value)) {
           throw new Error("Invalid asset status");
         }
         return true;

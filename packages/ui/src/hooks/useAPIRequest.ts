@@ -40,7 +40,8 @@ export const useApiRequest = (
   actions: ApiRequestActions = {},
   mockedResponse?: any,
   handleUnauthorizedResponse?: (response: any) => void,
-  unAuthorisedResponses: (string | number)[] = []
+  unAuthorisedResponses: (string | number)[] = [],
+  token?: string | null
 ) => {
   const [apiResponse, setApiResponse] = useState<any>(null);
   const [apiLoading, setApiLoading] = useState(false);
@@ -103,12 +104,17 @@ export const useApiRequest = (
     setCancelTokenSource(source);
 
     try {
+      const headers = {
+        ...additionalAPIRequestHeaders,
+        ...(token && { Authorization: `Bearer ${token}` }),
+      };
+
       const config: AxiosRequestConfig = {
         url: apiConfig.url,
         method: apiConfig.method,
         data: apiConfig.payload,
         params: apiConfig.urlParams,
-        headers: additionalAPIRequestHeaders,
+        headers,
         cancelToken: source.token,
       };
 

@@ -85,8 +85,7 @@ export class UserService {
       );
 
       logger.info("Login successful", { userId: user.id, email });
-      const { passwordHash: _, ...userWithoutPassword } = user;
-      return { user: userWithoutPassword, token };
+      return { token };
     } catch (error) {
       logger.error("Error during login", {
         email,

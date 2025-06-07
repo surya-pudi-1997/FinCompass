@@ -4,6 +4,7 @@ import {
   ApiRequestActions,
   ApiRequestModes,
 } from "@fin-compass/ui";
+import { useAuthStore } from "../store/useAuthStore";
 
 export const useApiCall = (
   modes: ApiRequestModes = {},
@@ -13,6 +14,8 @@ export const useApiCall = (
     window.location.href = "/login";
   }, []);
 
+  const token = useAuthStore((state) => state.token);
+
   // Common unauthorized response codes
   const unauthorizedResponses = ["401", 401, "UNAUTHORIZED", "unauthorized"];
 
@@ -21,6 +24,7 @@ export const useApiCall = (
     actions,
     undefined, // No mocked response
     handleUnauthorized,
-    unauthorizedResponses
+    unauthorizedResponses,
+    token
   );
 };

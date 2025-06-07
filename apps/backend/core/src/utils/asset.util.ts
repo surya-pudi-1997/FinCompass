@@ -30,13 +30,33 @@ export async function handleAssetTransaction({
   ) {
     return;
   }
+  // Get the current asset to check for null values
+  const asset = await client.asset.findUnique({
+    where: { id: assetId },
+    select: { income: true, expense: true },
+  });
 
-  const updateData =
-    type === TransactionTypeEnum.Income
-      ? { income: { [operation]: updateAmount } }
-      : type === TransactionTypeEnum.Expense
-        ? { expense: { [operation]: updateAmount } }
-        : null;
+  if (!asset) {
+    return;
+  }
+
+  let updateData: Prisma.AssetUpdateInput | null = null;
+
+  if (type === TransactionTypeEnum.Income) {
+    // Handle income case, setting to 0 first if it's null
+    if (asset.income === null) {
+      updateData = { income: updateAmount };
+    } else {
+      updateData = { income: { [operation]: updateAmount } };
+    }
+  } else if (type === TransactionTypeEnum.Expense) {
+    // Handle expense case, setting to 0 first if it's null
+    if (asset.expense === null) {
+      updateData = { expense: updateAmount };
+    } else {
+      updateData = { expense: { [operation]: updateAmount } };
+    }
+  }
 
   if (updateData) {
     await client.asset.update({

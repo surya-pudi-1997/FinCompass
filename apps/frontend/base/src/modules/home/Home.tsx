@@ -2,6 +2,8 @@ import { useAuthStore } from "../../store/useAuthStore";
 import { Box, Typography, Button } from "@fin-compass/ui";
 import { useNavigate } from "react-router-dom";
 
+import UserProfile from "./components/UserProfile";
+
 const Home = () => {
   const navigate = useNavigate();
   const store = useAuthStore((state) => state);
@@ -21,17 +23,18 @@ const Home = () => {
           alignItems: "center",
         }}
       >
-        <Typography variant="h4">Dashboard</Typography>
+        <Typography variant="h4">Fin-Compass</Typography>
         <Button variant="outlined" color="primary" onClick={handleLogout}>
           Logout
         </Button>
       </Box>
       <Box>
         <Typography variant="h6" color="primary">
-          Welcome to your FinCompass Dashboard
+          Welcome to your Dashboard
         </Typography>
         {/* TODO: Add dashboard content */}
       </Box>
+      <UserProfile />
     </Box>
   );
 };

@@ -28,7 +28,7 @@ export class AssetsService {
           income: 0,
         },
       });
-
+      logger.info(`Asset created for user ${userId}: ${JSON.stringify(asset)}`);
       // Only add to networth if asset is active
       if (data.status === "Active") {
         await updateNetworth(userId, data.bought_value, "add", tx);

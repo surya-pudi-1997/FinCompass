@@ -11,5 +11,34 @@
     "markdown",
     "javascriptreact",
     "typescriptreact"
+  ],
+  "github.copilot.chat.codeGeneration.instructions": [
+    {
+      "text": "Use TypeScript strict mode, prefer interfaces over types"
+    },
+    {
+      "text": "Types: All types and interfaces are in @fin-compass/types, import from there in core/base apps"
+    },
+    {
+      "text": "UI: Never use MUI directly in core app, only @fin-compass/ui components"
+    },
+    {
+      "text": "New components: Create MUI abstraction in ui package first, then use in apps"
+    },
+    {
+      "text": "Icons: Use lucide-react for all icons"
+    },
+    {
+      "text": "Structure: Use /views folder instead of /components in apps"
+    },
+    {
+      "text": "Follow existing: useApiCall hook, Zustand stores, Prisma patterns"
+    },
+    {
+      "text": "API: Routes/Controller/service/validation structure, proper error handling in stores"
+    },
+    {
+      "text": "Import order: React, @fin-compass packages, lucide icons, then relative imports"
+    }
   ]
 }

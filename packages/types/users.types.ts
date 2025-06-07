@@ -17,7 +17,6 @@ export interface UpdateUserInput {
 }
 
 export interface LoginResponse {
-  user: UserWithoutPassword;
   token: string;
 }
 
