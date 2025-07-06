@@ -1,7 +1,6 @@
-import React, { useMemo } from "react";
+import { useMemo } from "react";
 import { Link } from "react-router";
-import { useFormGenerator } from "@/shared/hooks/useFormGenerator";
-import FormField from "@/shared/components/FormField";
+import { FormField, useFormGenerator } from "@/shared/libs/formBuilder";
 import type { CreateUserInput } from "@fin-compass/types";
 
 const RegisterPage = () => {
