@@ -11,7 +11,7 @@ const userController = new UserController();
 
 // Public routes
 router.post(
-  "/signup",
+  "/register",
   userValidation.signup,
   (req: Request, res: Response, next: NextFunction) =>
     void userController.signup(req, res)

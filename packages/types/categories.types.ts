@@ -15,3 +15,10 @@ export interface CreateTransactionCategoryDto {
 
 export interface UpdateTransactionCategoryDto
   extends Partial<CreateTransactionCategoryDto> {}
+
+export interface Category extends CreateTransactionCategoryDto {
+  id: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}

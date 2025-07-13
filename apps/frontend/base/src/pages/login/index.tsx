@@ -1,51 +1,66 @@
-import React, { useMemo } from "react";
+import React from "react";
 import { Link } from "react-router";
 import { FormField, useFormGenerator } from "@/shared/libs/formBuilder";
+import { useUserSelectors } from "@/shared/stores";
+import useLoginService from "./services/useLoginService";
 import type { LoginInput } from "@fin-compass/types";
 
+const LOGIN_FORM_FIELDS = [
+  {
+    name: "email",
+    type: "email" as const,
+    label: "Email Address",
+    placeholder: "Enter your email address",
+    validation: {
+      required: true,
+      email: true,
+    },
+  },
+  {
+    name: "password",
+    type: "password" as const,
+    label: "Password",
+    placeholder: "Enter your password",
+    validation: {
+      required: true,
+      minlength: 8,
+    },
+  },
+];
+
+const LOGIN_FORM_CONFIG = {
+  formName: "login",
+  fields: LOGIN_FORM_FIELDS,
+};
+
 const LoginPage = () => {
-  const formConfig = useMemo(
-    () => ({
-      formName: "login",
-      fields: [
-        {
-          name: "email",
-          type: "email" as const,
-          label: "Email Address",
-          placeholder: "Enter your email address",
-          validation: {
-            required: true,
-            email: true,
-          },
-        },
-        {
-          name: "password",
-          type: "password" as const,
-          label: "Password",
-          placeholder: "Enter your password",
-          validation: {
-            required: true,
-            minlength: 8,
-          },
-        },
-      ],
-      onSubmit: async (data: Record<string, unknown>) => {
-        // Create the login data matching LoginInput interface
-        const loginData: LoginInput = {
-          email: data.email as string,
-          password: data.password as string,
-        };
+  const { login } = useLoginService();
+  const loginError = useUserSelectors.loginError();
+  const loginLoading = useUserSelectors.loginLoading();
 
-        console.log("Login form submitted with data:", loginData);
-        // TODO: Implement API call to login user
-        // Example: await loginUser(loginData);
-      },
-    }),
-    []
-  );
+  const { formData, validateForm, getFieldProps } =
+    useFormGenerator(LOGIN_FORM_CONFIG);
 
-  const { isSubmitting, resetForm, handleSubmit, getFieldProps } =
-    useFormGenerator(formConfig);
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // Validate form before submission
+    if (!validateForm()) {
+      return;
+    }
+
+    // Create the login data matching LoginInput interface
+    const loginData: LoginInput = {
+      email: formData.email as string,
+      password: formData.password as string,
+    };
+
+    console.log("Login form submitted with data:", loginData);
+    login(loginData.email, loginData.password);
+  };
+
+  // Use login loading state instead of form submitting state
+  const isSubmitting = loginLoading;
 
   return (
     <div className="flex h-full w-full items-center justify-center bg-gray-50">
@@ -58,6 +73,13 @@ const LoginPage = () => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Error Display */}
+          {loginError && (
+            <div className="p-3 bg-red-50 border border-red-200 rounded-md">
+              <p className="text-sm text-red-600">{loginError}</p>
+            </div>
+          )}
+
           {/* Email Field */}
           <FormField {...getFieldProps("email")!} />
 

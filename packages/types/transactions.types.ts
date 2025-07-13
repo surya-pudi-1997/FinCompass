@@ -17,3 +17,10 @@ export interface CreateTransactionDto {
 }
 
 export interface UpdateTransactionDto extends Partial<CreateTransactionDto> {}
+
+export interface Transaction extends CreateTransactionDto {
+  id: string;
+  userId: string;
+  createdAt: Date;
+  updatedAt?: Date;
+}

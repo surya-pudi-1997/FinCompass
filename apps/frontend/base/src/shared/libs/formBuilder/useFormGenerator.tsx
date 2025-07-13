@@ -39,7 +39,7 @@ interface FieldConfig {
 interface FormConfig {
   formName: string;
   fields: FieldConfig[];
-  onSubmit: (data: Record<string, unknown>) => Promise<void> | void;
+  onSubmit?: (data: Record<string, unknown>) => Promise<void> | void;
 }
 
 interface FieldProps {
@@ -294,7 +294,9 @@ export const useFormGenerator = (
 
       if (isValid) {
         try {
-          await config.onSubmit(formData);
+          if (config.onSubmit) {
+            await config.onSubmit(formData);
+          }
         } catch (submitError) {
           console.error("Form submission error:", submitError);
         }

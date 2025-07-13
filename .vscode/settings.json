@@ -14,16 +14,7 @@
   ],
   "github.copilot.chat.codeGeneration.instructions": [
     {
-      "text": "Use TypeScript strict mode, prefer interfaces over types"
-    },
-    {
       "text": "Types: All types and interfaces are in @fin-compass/types, import from there in core/base apps"
-    },
-    {
-      "text": "UI: Never use MUI directly in core app, only @fin-compass/ui components"
-    },
-    {
-      "text": "New components: Create MUI abstraction in ui package first, then use in apps"
     },
     {
       "text": "Icons: Use lucide-react for all icons"
@@ -39,6 +30,39 @@
     },
     {
       "text": "Import order: React, @fin-compass packages, lucide icons, then relative imports"
+    },
+    {
+      "text": "Services: Create CRUD services in /pages/{entity}/services/ folder following useGetProfile.ts pattern"
+    },
+    {
+      "text": "Service Structure: Import useApiRequest, API_ENDPOINTS, API_METHODS, entity store, and types from @fin-compass/types"
+    },
+    {
+      "text": "Store Integration: Services should use entity store actions (setLoading, setError, addEntity, updateEntity, removeEntity) instead of returning API state"
+    },
+    {
+      "text": "Service Returns: Only return action functions and cancelAPIRequest, not apiResponse/apiLoading/apiError - components consume state from store selectors"
+    },
+    {
+      "text": "API Endpoints: Define all endpoints in shared/constants/api.ts with proper naming (GET_ENTITY, CREATE_ENTITY, UPDATE_ENTITY, DELETE_ENTITY)"
+    },
+    {
+      "text": "Store Pattern: Create Zustand stores with state (entities, selectedEntity, loading states, error states), actions (CRUD + setters), and selectors for performance"
+    },
+    {
+      "text": "Error Handling: Each CRUD operation has separate error state in store, clear errors on success, set specific error messages in status handlers"
+    },
+    {
+      "text": "Loading States: Use store loading actions in useApiRequest loaderAction option, separate loading state per operation"
+    },
+    {
+      "text": "Status Handlers: Implement specific status handlers (200/201 for success, 400 for validation, 404 for not found) that update store directly"
+    },
+    {
+      "text": "Store Updates: Success callbacks should update store (setEntities, addEntity, updateEntity, removeEntity) and clear errors"
+    },
+    {
+      "text": "Component Usage: Components import store selectors for state and service hooks for actions, no direct API state consumption"
     }
   ]
 }
