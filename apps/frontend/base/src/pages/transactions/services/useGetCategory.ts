@@ -2,7 +2,7 @@ import { useApiRequest } from "@/shared/libs/api/useApiRequest";
 import { API_ENDPOINTS } from "@/shared/constants/api";
 import { API_METHODS } from "@/shared/constants/api";
 import { useCategoriesStore } from "@/shared/stores";
-import { Category } from "@fin-compass/types";
+import { TransactionCategory } from "@fin-compass/types";
 
 interface ApiResponse<T = unknown> {
   status_code: number;

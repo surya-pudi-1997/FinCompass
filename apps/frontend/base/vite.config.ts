@@ -2,9 +2,20 @@ import { defineConfig } from "vite";
 import path from "path";
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
+import federation from "@originjs/vite-plugin-federation";
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    federation({
+      name: "Base",
+      remotes: {
+        Admin: "http://localhost:4173/assets/remoteEntry.js", // or actual domain
+      },
+      shared: ["react", "react-dom"],
+    }),
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),

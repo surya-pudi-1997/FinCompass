@@ -1,15 +1,16 @@
-import { lazy, Suspense } from "react";
-import { BrowserRouter, Routes, Route } from "react-router";
+import React, { lazy, Suspense } from "react";
+import { BrowserRouter, Routes, Route, useNavigate, Outlet } from "react-router";
 import RootLayout from "@/components/layouts/RootLayout";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import CalculatorLayout from "@/components/layouts/CalculatorLayout";
+import GlobalLoader from "@/components/ui/GloabalLoader";
 import { routes } from "./routes";
+import Landing from "@/pages/landing";
+import Login from "@/pages/login";
+import Register from "@/pages/register";
+import Home from "@/pages/home";
+import NotFound from "@/pages/notFound";
 
-const Landing = lazy(() => import("@/pages/landing"));
-const Login = lazy(() => import("@/pages/login"));
-const Register = lazy(() => import("@/pages/register"));
-const Home = lazy(() => import("@/pages/home"));
-const NotFound = lazy(() => import("@/pages/notFound"));
 const Accounts = lazy(() => import("@/pages/accounts"));
 const Assets = lazy(() => import("@/pages/assets"));
 const Transactions = lazy(() => import("@/pages/transactions"));
@@ -25,8 +26,8 @@ const LoanCalculator = lazy(() => import("@/pages/calculator/loanCalculator"));
 const Router = () => {
   return (
     <BrowserRouter>
-      <Suspense fallback={<div>Loading...</div>}>
-        <Routes>
+      <Suspense fallback={<GlobalLoader />}>
+        <Routes >
           <Route element={<RootLayout />}>
             <Route path={routes.LANDING} element={<Landing />} />
             <Route path={routes.LOGIN} element={<Login />} />
@@ -53,5 +54,6 @@ const Router = () => {
     </BrowserRouter>
   );
 };
+
 
 export default Router;

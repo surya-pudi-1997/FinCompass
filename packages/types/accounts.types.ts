@@ -1,8 +1,8 @@
 export enum AccountTypeEnum {
-    Savings = 'Savings',
-    CreditCard = 'Credit Card',
-    Investment = 'Investment',
-    Other = 'Other'
+  Savings = "Savings",
+  CreditCard = "CreditCard",
+  Investment = "Investment",
+  Other = "Other",
 }
 
 export type AccountType = keyof typeof AccountTypeEnum;

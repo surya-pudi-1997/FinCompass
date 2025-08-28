@@ -11,25 +11,27 @@ interface ApiResponse<T = unknown> {
 }
 
 const useUpdateTransactionService = () => {
-  const { 
-    updateTransaction: updateTransactionInStore, 
-    setUpdateTransactionError, 
-    setUpdateTransactionLoading 
+  const {
+    updateTransaction: updateTransactionInStore,
+    setUpdateTransactionError,
+    setUpdateTransactionLoading,
   } = useTransactionsStore();
 
-  const {
-    apiRequestController,
-    cancelAPIRequest,
-  } = useApiRequest<ApiResponse<Transaction>>(
-    { cancelAPIOnUnmount: true },
+  const { apiRequestController, cancelAPIRequest } = useApiRequest<
+    ApiResponse<Transaction>
+  >(
+    { cancelAPIOnUnmount: false },
     { loaderAction: setUpdateTransactionLoading }
   );
 
-  const updateTransaction = (transactionId: string, transactionData: UpdateTransactionDto) => {
+  const updateTransaction = (
+    transactionId: string,
+    transactionData: UpdateTransactionDto
+  ) => {
     const apiConfig = {
       method: API_METHODS.PUT,
       url: `${API_ENDPOINTS.UPDATE_TRANSACTION}/${transactionId}`,
-      data: transactionData,
+      payload: transactionData,
     };
 
     const externalStatusHandlers = {
@@ -39,7 +41,10 @@ const useUpdateTransactionService = () => {
           status_txt: "Transaction updated successfully",
           callback: (response: ApiResponse<Transaction>) => {
             console.log("Transaction update successful:", response);
-            updateTransactionInStore(transactionId, response?.data?.transaction);
+            updateTransactionInStore(
+              transactionId,
+              response?.data?.transaction
+            );
             setUpdateTransactionError(null);
           },
         },
@@ -67,7 +72,9 @@ const useUpdateTransactionService = () => {
           console.warn("API request was cancelled:", error);
         } else {
           console.error("Transaction update failed:", error);
-          setUpdateTransactionError("Something went wrong, please try again later");
+          setUpdateTransactionError(
+            "Something went wrong, please try again later"
+          );
         }
       },
     };

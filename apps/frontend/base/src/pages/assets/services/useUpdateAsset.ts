@@ -25,7 +25,7 @@ const useUpdateAssetService = () => {
     const apiConfig = {
       method: API_METHODS.PUT,
       url: `${API_ENDPOINTS.UPDATE_ASSET}/${assetId}`,
-      data: assetData,
+      payload: assetData,
     };
 
     const externalStatusHandlers = {

@@ -26,7 +26,7 @@ const useDeleteAccountService = () => {
     const externalStatusHandlers = {
       statusHandlers: [
         {
-          status_code: 204,
+          status_code: 200,
           status_txt: "Account deleted successfully",
           callback: (response: ApiResponse<string>) => {
             console.log("Account deletion successful:", response);

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { devtools, persist, createJSONStorage } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 
 import { Transaction, TransactionType } from "@fin-compass/types";
 
@@ -89,260 +89,249 @@ const initialState: TransactionsState = {
 
 export const useTransactionsStore = create<TransactionsStore>()(
   devtools(
-    persist(
-      immer((set, get) => ({
-        ...initialState,
+    immer((set, get) => ({
+      ...initialState,
 
-        // Transaction data actions
-        setTransactions: (transactions: Transaction[]) => {
-          set((state) => {
-            state.transactions = transactions;
-          });
-        },
+      // Transaction data actions
+      setTransactions: (transactions: Transaction[]) => {
+        set((state) => {
+          state.transactions = transactions;
+        });
+      },
 
-        setSelectedTransaction: (transaction: Transaction | null) => {
-          set((state) => {
-            state.selectedTransaction = transaction;
-          });
-        },
+      setSelectedTransaction: (transaction: Transaction | null) => {
+        set((state) => {
+          state.selectedTransaction = transaction;
+        });
+      },
 
-        addTransaction: (transaction: Transaction) => {
-          set((state) => {
-            state.transactions.push(transaction);
-          });
-        },
+      addTransaction: (transaction: Transaction) => {
+        set((state) => {
+          state.transactions.push(transaction);
+        });
+      },
 
-        updateTransaction: (
-          transactionId: string,
-          updates: Partial<Transaction>
-        ) => {
-          set((state) => {
-            const transactionIndex = state.transactions.findIndex(
-              (transaction) => transaction.id === transactionId
-            );
-            if (transactionIndex !== -1) {
-              Object.assign(state.transactions[transactionIndex], updates);
-            }
-            // Update selected transaction if it's the one being updated
-            if (state.selectedTransaction?.id === transactionId) {
-              Object.assign(state.selectedTransaction, updates);
-            }
-          });
-        },
-
-        removeTransaction: (transactionId: string) => {
-          set((state) => {
-            state.transactions = state.transactions.filter(
-              (transaction) => transaction.id !== transactionId
-            );
-            // Clear selected transaction if it's the one being deleted
-            if (state.selectedTransaction?.id === transactionId) {
-              state.selectedTransaction = null;
-            }
-          });
-        },
-
-        clearTransactions: () => {
-          set((state) => {
-            state.transactions = [];
-            state.selectedTransaction = null;
-          });
-        },
-
-        // Loading state actions
-        setFetchTransactionsLoading: (loading: boolean) => {
-          set((state) => {
-            state.fetchTransactionsLoading = loading;
-          });
-        },
-
-        setFetchTransactionLoading: (loading: boolean) => {
-          set((state) => {
-            state.fetchTransactionLoading = loading;
-          });
-        },
-
-        setCreateTransactionLoading: (loading: boolean) => {
-          set((state) => {
-            state.createTransactionLoading = loading;
-          });
-        },
-
-        setUpdateTransactionLoading: (loading: boolean) => {
-          set((state) => {
-            state.updateTransactionLoading = loading;
-          });
-        },
-
-        setDeleteTransactionLoading: (loading: boolean) => {
-          set((state) => {
-            state.deleteTransactionLoading = loading;
-          });
-        },
-
-        // Error state actions
-        setFetchTransactionsError: (error: string | null) => {
-          set((state) => {
-            state.fetchTransactionsError = error;
-          });
-        },
-
-        setFetchTransactionError: (error: string | null) => {
-          set((state) => {
-            state.fetchTransactionError = error;
-          });
-        },
-
-        setCreateTransactionError: (error: string | null) => {
-          set((state) => {
-            state.createTransactionError = error;
-          });
-        },
-
-        setUpdateTransactionError: (error: string | null) => {
-          set((state) => {
-            state.updateTransactionError = error;
-          });
-        },
-
-        setDeleteTransactionError: (error: string | null) => {
-          set((state) => {
-            state.deleteTransactionError = error;
-          });
-        },
-
-        clearFetchTransactionsError: () => {
-          set((state) => {
-            state.fetchTransactionsError = null;
-          });
-        },
-
-        clearFetchTransactionError: () => {
-          set((state) => {
-            state.fetchTransactionError = null;
-          });
-        },
-
-        clearCreateTransactionError: () => {
-          set((state) => {
-            state.createTransactionError = null;
-          });
-        },
-
-        clearUpdateTransactionError: () => {
-          set((state) => {
-            state.updateTransactionError = null;
-          });
-        },
-
-        clearDeleteTransactionError: () => {
-          set((state) => {
-            state.deleteTransactionError = null;
-          });
-        },
-
-        clearAllErrors: () => {
-          set((state) => {
-            state.fetchTransactionsError = null;
-            state.fetchTransactionError = null;
-            state.createTransactionError = null;
-            state.updateTransactionError = null;
-            state.deleteTransactionError = null;
-          });
-        },
-
-        // Utility actions
-        getTransactionById: (transactionId: string) => {
-          const { transactions } = get();
-          return transactions.find(
+      updateTransaction: (
+        transactionId: string,
+        updates: Partial<Transaction>
+      ) => {
+        set((state) => {
+          console.log({ transactionId, updates });
+          const transactionIndex = state.transactions.findIndex(
             (transaction) => transaction.id === transactionId
           );
-        },
+          if (transactionIndex !== -1) {
+            Object.assign(state.transactions[transactionIndex], updates);
+          }
+          // Update selected transaction if it's the one being updated
+          if (state.selectedTransaction?.id === transactionId) {
+            Object.assign(state.selectedTransaction, updates);
+          }
+        });
+      },
 
-        getTransactionsByType: (type: TransactionType) => {
-          const { transactions } = get();
-          return transactions.filter(
-            (transaction) => transaction.type === type
+      removeTransaction: (transactionId: string) => {
+        set((state) => {
+          state.transactions = state.transactions.filter(
+            (transaction) => transaction.id !== transactionId
           );
-        },
+          // Clear selected transaction if it's the one being deleted
+          if (state.selectedTransaction?.id === transactionId) {
+            state.selectedTransaction = null;
+          }
+        });
+      },
 
-        getTransactionsByAccount: (accountId: string) => {
-          const { transactions } = get();
-          return transactions.filter(
-            (transaction) => transaction.accountId === accountId
-          );
-        },
+      clearTransactions: () => {
+        set((state) => {
+          state.transactions = [];
+          state.selectedTransaction = null;
+        });
+      },
 
-        getTransactionsByCategory: (categoryId: string) => {
-          const { transactions } = get();
-          return transactions.filter(
-            (transaction) => transaction.categoryId === categoryId
-          );
-        },
+      // Loading state actions
+      setFetchTransactionsLoading: (loading: boolean) => {
+        set((state) => {
+          state.fetchTransactionsLoading = loading;
+        });
+      },
 
-        getTransactionsByAsset: (assetId: string) => {
-          const { transactions } = get();
-          return transactions.filter(
-            (transaction) => transaction.assetId === assetId
-          );
-        },
+      setFetchTransactionLoading: (loading: boolean) => {
+        set((state) => {
+          state.fetchTransactionLoading = loading;
+        });
+      },
 
-        getIncomeTransactions: () => {
-          const { transactions } = get();
-          return transactions.filter(
-            (transaction) => transaction.type === "Income"
-          );
-        },
+      setCreateTransactionLoading: (loading: boolean) => {
+        set((state) => {
+          state.createTransactionLoading = loading;
+        });
+      },
 
-        getExpenseTransactions: () => {
-          const { transactions } = get();
-          return transactions.filter(
-            (transaction) => transaction.type === "Expense"
-          );
-        },
+      setUpdateTransactionLoading: (loading: boolean) => {
+        set((state) => {
+          state.updateTransactionLoading = loading;
+        });
+      },
 
-        getInvestmentTransactions: () => {
-          const { transactions } = get();
-          return transactions.filter(
-            (transaction) => transaction.type === "Investment"
-          );
-        },
+      setDeleteTransactionLoading: (loading: boolean) => {
+        set((state) => {
+          state.deleteTransactionLoading = loading;
+        });
+      },
 
-        getTotalIncome: () => {
-          const { transactions } = get();
-          return transactions
-            .filter((transaction) => transaction.type === "Income")
-            .reduce((total, transaction) => total + transaction.amount, 0);
-        },
+      // Error state actions
+      setFetchTransactionsError: (error: string | null) => {
+        set((state) => {
+          state.fetchTransactionsError = error;
+        });
+      },
 
-        getTotalExpenses: () => {
-          const { transactions } = get();
-          return transactions
-            .filter((transaction) => transaction.type === "Expense")
-            .reduce((total, transaction) => total + transaction.amount, 0);
-        },
+      setFetchTransactionError: (error: string | null) => {
+        set((state) => {
+          state.fetchTransactionError = error;
+        });
+      },
 
-        getTotalInvestments: () => {
-          const { transactions } = get();
-          return transactions
-            .filter((transaction) => transaction.type === "Investment")
-            .reduce((total, transaction) => total + transaction.amount, 0);
-        },
+      setCreateTransactionError: (error: string | null) => {
+        set((state) => {
+          state.createTransactionError = error;
+        });
+      },
 
-        getNetCashFlow: () => {
-          const { getTotalIncome, getTotalExpenses } = get();
-          return getTotalIncome() - getTotalExpenses();
-        },
-      })),
-      {
-        name: "transactions-store",
-        storage: createJSONStorage(() => sessionStorage),
-        partialize: (state) => ({
-          transactions: state.transactions,
-          selectedTransaction: state.selectedTransaction,
-        }),
-      }
-    ),
+      setUpdateTransactionError: (error: string | null) => {
+        set((state) => {
+          state.updateTransactionError = error;
+        });
+      },
+
+      setDeleteTransactionError: (error: string | null) => {
+        set((state) => {
+          state.deleteTransactionError = error;
+        });
+      },
+
+      clearFetchTransactionsError: () => {
+        set((state) => {
+          state.fetchTransactionsError = null;
+        });
+      },
+
+      clearFetchTransactionError: () => {
+        set((state) => {
+          state.fetchTransactionError = null;
+        });
+      },
+
+      clearCreateTransactionError: () => {
+        set((state) => {
+          state.createTransactionError = null;
+        });
+      },
+
+      clearUpdateTransactionError: () => {
+        set((state) => {
+          state.updateTransactionError = null;
+        });
+      },
+
+      clearDeleteTransactionError: () => {
+        set((state) => {
+          state.deleteTransactionError = null;
+        });
+      },
+
+      clearAllErrors: () => {
+        set((state) => {
+          state.fetchTransactionsError = null;
+          state.fetchTransactionError = null;
+          state.createTransactionError = null;
+          state.updateTransactionError = null;
+          state.deleteTransactionError = null;
+        });
+      },
+
+      // Utility actions
+      getTransactionById: (transactionId: string) => {
+        const { transactions } = get();
+        return transactions.find(
+          (transaction) => transaction.id === transactionId
+        );
+      },
+
+      getTransactionsByType: (type: TransactionType) => {
+        const { transactions } = get();
+        return transactions.filter((transaction) => transaction.type === type);
+      },
+
+      getTransactionsByAccount: (accountId: string) => {
+        const { transactions } = get();
+        return transactions.filter(
+          (transaction) => transaction.accountId === accountId
+        );
+      },
+
+      getTransactionsByCategory: (categoryId: string) => {
+        const { transactions } = get();
+        return transactions.filter(
+          (transaction) => transaction.categoryId === categoryId
+        );
+      },
+
+      getTransactionsByAsset: (assetId: string) => {
+        const { transactions } = get();
+        return transactions.filter(
+          (transaction) => transaction.assetId === assetId
+        );
+      },
+
+      getIncomeTransactions: () => {
+        const { transactions } = get();
+        return transactions.filter(
+          (transaction) => transaction.type === "Income"
+        );
+      },
+
+      getExpenseTransactions: () => {
+        const { transactions } = get();
+        return transactions.filter(
+          (transaction) => transaction.type === "Expense"
+        );
+      },
+
+      getInvestmentTransactions: () => {
+        const { transactions } = get();
+        return transactions.filter(
+          (transaction) => transaction.type === "Investment"
+        );
+      },
+
+      getTotalIncome: () => {
+        const { transactions } = get();
+        return transactions
+          .filter((transaction) => transaction.type === "Income")
+          .reduce((total, transaction) => total + transaction.amount, 0);
+      },
+
+      getTotalExpenses: () => {
+        const { transactions } = get();
+        return transactions
+          .filter((transaction) => transaction.type === "Expense")
+          .reduce((total, transaction) => total + transaction.amount, 0);
+      },
+
+      getTotalInvestments: () => {
+        const { transactions } = get();
+        return transactions
+          .filter((transaction) => transaction.type === "Investment")
+          .reduce((total, transaction) => total + transaction.amount, 0);
+      },
+
+      getNetCashFlow: () => {
+        const { getTotalIncome, getTotalExpenses } = get();
+        return getTotalIncome() - getTotalExpenses();
+      },
+    })),
     {
       name: "transactions-store",
     }

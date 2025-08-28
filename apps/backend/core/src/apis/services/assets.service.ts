@@ -24,8 +24,8 @@ export class AssetsService {
         data: {
           ...data,
           userId,
-          expense: 0,
-          income: 0,
+          expense: data?.expense || 0,
+          income: data?.income || 0,
         },
       });
       logger.info(`Asset created for user ${userId}: ${JSON.stringify(asset)}`);

@@ -118,8 +118,8 @@ export class AccountsController {
   async deleteAccount(req: Request, res: Response) {
     try {
       await accountsService.delete(req.params.id, req.user.userId);
-      res.status(204).json({
-        status_code: 204,
+      res.status(200).json({
+        status_code: 200,
         status_txt: "Account deleted successfully",
         data: { id: req.params.id },
       });

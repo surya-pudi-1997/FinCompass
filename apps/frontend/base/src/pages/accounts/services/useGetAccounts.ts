@@ -2,14 +2,7 @@ import { useApiRequest } from "@/shared/libs/api/useApiRequest";
 import { API_ENDPOINTS } from "@/shared/constants/api";
 import { API_METHODS } from "@/shared/constants/api";
 import { useAccountsStore } from "@/shared/stores";
-import { CreateAccountDto } from "@fin-compass/types";
-
-interface Account extends CreateAccountDto {
-  id: string;
-  userId: string;
-  createdAt: string;
-  updatedAt: string;
-}
+import { transformAccountsFromApi, AccountApiResponse } from "@/shared/utils/apiTransforms";
 
 interface ApiResponse<T = unknown> {
   status_code: number;
@@ -22,7 +15,7 @@ const useGetAccountsService = () => {
     useAccountsStore();
 
   const { apiRequestController, cancelAPIRequest } = useApiRequest<
-    ApiResponse<Account[]>
+    ApiResponse<AccountApiResponse[]>
   >({ cancelAPIOnUnmount: true }, { loaderAction: setFetchAccountsLoading });
 
   const getAccounts = () => {
@@ -36,16 +29,17 @@ const useGetAccountsService = () => {
         {
           status_code: 200,
           status_txt: "Success",
-          callback: (response: ApiResponse<Account[]>) => {
+          callback: (response: ApiResponse<AccountApiResponse[]>) => {
             console.log("Accounts fetch successful:", response);
-            setAccounts(response?.data?.accounts || []);
+            const transformedAccounts = transformAccountsFromApi(response?.data?.accounts || []);
+            setAccounts(transformedAccounts);
             setFetchAccountsError(null);
           },
         },
         {
           status_code: 404,
           status_txt: "Accounts not found",
-          callback: (response: ApiResponse<Account[]>) => {
+          callback: (response: ApiResponse<AccountApiResponse[]>) => {
             console.error("Accounts not found:", response);
             setFetchAccountsError("No accounts found");
           },

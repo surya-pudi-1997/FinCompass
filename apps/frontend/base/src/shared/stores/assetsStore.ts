@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { devtools, persist, createJSONStorage } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 
 import { Asset } from "@fin-compass/types";
 
@@ -80,219 +80,209 @@ const initialState: AssetsState = {
 
 export const useAssetsStore = create<AssetsStore>()(
   devtools(
-    persist(
-      immer((set, get) => ({
-        ...initialState,
+    immer((set, get) => ({
+      ...initialState,
 
-        // Asset data actions
-        setAssets: (assets: Asset[]) => {
-          set((state) => {
-            state.assets = assets;
-          });
-        },
+      // Asset data actions
+      setAssets: (assets: Asset[]) => {
+        set((state) => {
+          state.assets = assets;
+        });
+      },
 
-        setSelectedAsset: (asset: Asset | null) => {
-          set((state) => {
-            state.selectedAsset = asset;
-          });
-        },
+      setSelectedAsset: (asset: Asset | null) => {
+        set((state) => {
+          state.selectedAsset = asset;
+        });
+      },
 
-        addAsset: (asset: Asset) => {
-          set((state) => {
-            state.assets.push(asset);
-          });
-        },
+      addAsset: (asset: Asset) => {
+        set((state) => {
+          state.assets.push(asset);
+        });
+      },
 
-        updateAsset: (assetId: string, updates: Partial<Asset>) => {
-          set((state) => {
-            const assetIndex = state.assets.findIndex(
-              (asset) => asset.id === assetId
-            );
-            if (assetIndex !== -1) {
-              Object.assign(state.assets[assetIndex], updates);
-            }
-            // Update selected asset if it's the one being updated
-            if (state.selectedAsset?.id === assetId) {
-              Object.assign(state.selectedAsset, updates);
-            }
-          });
-        },
+      updateAsset: (assetId: string, updates: Partial<Asset>) => {
+        set((state) => {
+          const assetIndex = state.assets.findIndex(
+            (asset) => asset.id === assetId
+          );
+          if (assetIndex !== -1) {
+            Object.assign(state.assets[assetIndex], updates);
+          }
+          // Update selected asset if it's the one being updated
+          if (state.selectedAsset?.id === assetId) {
+            Object.assign(state.selectedAsset, updates);
+          }
+        });
+      },
 
-        removeAsset: (assetId: string) => {
-          set((state) => {
-            state.assets = state.assets.filter((asset) => asset.id !== assetId);
-            // Clear selected asset if it's the one being deleted
-            if (state.selectedAsset?.id === assetId) {
-              state.selectedAsset = null;
-            }
-          });
-        },
-
-        clearAssets: () => {
-          set((state) => {
-            state.assets = [];
+      removeAsset: (assetId: string) => {
+        set((state) => {
+          state.assets = state.assets.filter((asset) => asset.id !== assetId);
+          // Clear selected asset if it's the one being deleted
+          if (state.selectedAsset?.id === assetId) {
             state.selectedAsset = null;
-          });
-        },
+          }
+        });
+      },
 
-        // Loading state actions
-        setFetchAssetsLoading: (loading: boolean) => {
-          set((state) => {
-            state.fetchAssetsLoading = loading;
-          });
-        },
+      clearAssets: () => {
+        set((state) => {
+          state.assets = [];
+          state.selectedAsset = null;
+        });
+      },
 
-        setFetchAssetLoading: (loading: boolean) => {
-          set((state) => {
-            state.fetchAssetLoading = loading;
-          });
-        },
+      // Loading state actions
+      setFetchAssetsLoading: (loading: boolean) => {
+        set((state) => {
+          state.fetchAssetsLoading = loading;
+        });
+      },
 
-        setCreateAssetLoading: (loading: boolean) => {
-          set((state) => {
-            state.createAssetLoading = loading;
-          });
-        },
+      setFetchAssetLoading: (loading: boolean) => {
+        set((state) => {
+          state.fetchAssetLoading = loading;
+        });
+      },
 
-        setUpdateAssetLoading: (loading: boolean) => {
-          set((state) => {
-            state.updateAssetLoading = loading;
-          });
-        },
+      setCreateAssetLoading: (loading: boolean) => {
+        set((state) => {
+          state.createAssetLoading = loading;
+        });
+      },
 
-        setDeleteAssetLoading: (loading: boolean) => {
-          set((state) => {
-            state.deleteAssetLoading = loading;
-          });
-        },
+      setUpdateAssetLoading: (loading: boolean) => {
+        set((state) => {
+          state.updateAssetLoading = loading;
+        });
+      },
 
-        // Error state actions
-        setFetchAssetsError: (error: string | null) => {
-          set((state) => {
-            state.fetchAssetsError = error;
-          });
-        },
+      setDeleteAssetLoading: (loading: boolean) => {
+        set((state) => {
+          state.deleteAssetLoading = loading;
+        });
+      },
 
-        setFetchAssetError: (error: string | null) => {
-          set((state) => {
-            state.fetchAssetError = error;
-          });
-        },
+      // Error state actions
+      setFetchAssetsError: (error: string | null) => {
+        set((state) => {
+          state.fetchAssetsError = error;
+        });
+      },
 
-        setCreateAssetError: (error: string | null) => {
-          set((state) => {
-            state.createAssetError = error;
-          });
-        },
+      setFetchAssetError: (error: string | null) => {
+        set((state) => {
+          state.fetchAssetError = error;
+        });
+      },
 
-        setUpdateAssetError: (error: string | null) => {
-          set((state) => {
-            state.updateAssetError = error;
-          });
-        },
+      setCreateAssetError: (error: string | null) => {
+        set((state) => {
+          state.createAssetError = error;
+        });
+      },
 
-        setDeleteAssetError: (error: string | null) => {
-          set((state) => {
-            state.deleteAssetError = error;
-          });
-        },
+      setUpdateAssetError: (error: string | null) => {
+        set((state) => {
+          state.updateAssetError = error;
+        });
+      },
 
-        clearFetchAssetsError: () => {
-          set((state) => {
-            state.fetchAssetsError = null;
-          });
-        },
+      setDeleteAssetError: (error: string | null) => {
+        set((state) => {
+          state.deleteAssetError = error;
+        });
+      },
 
-        clearFetchAssetError: () => {
-          set((state) => {
-            state.fetchAssetError = null;
-          });
-        },
+      clearFetchAssetsError: () => {
+        set((state) => {
+          state.fetchAssetsError = null;
+        });
+      },
 
-        clearCreateAssetError: () => {
-          set((state) => {
-            state.createAssetError = null;
-          });
-        },
+      clearFetchAssetError: () => {
+        set((state) => {
+          state.fetchAssetError = null;
+        });
+      },
 
-        clearUpdateAssetError: () => {
-          set((state) => {
-            state.updateAssetError = null;
-          });
-        },
+      clearCreateAssetError: () => {
+        set((state) => {
+          state.createAssetError = null;
+        });
+      },
 
-        clearDeleteAssetError: () => {
-          set((state) => {
-            state.deleteAssetError = null;
-          });
-        },
+      clearUpdateAssetError: () => {
+        set((state) => {
+          state.updateAssetError = null;
+        });
+      },
 
-        clearAllErrors: () => {
-          set((state) => {
-            state.fetchAssetsError = null;
-            state.fetchAssetError = null;
-            state.createAssetError = null;
-            state.updateAssetError = null;
-            state.deleteAssetError = null;
-          });
-        },
+      clearDeleteAssetError: () => {
+        set((state) => {
+          state.deleteAssetError = null;
+        });
+      },
 
-        // Utility actions
-        getAssetById: (assetId: string) => {
-          const { assets } = get();
-          return assets.find((asset) => asset.id === assetId);
-        },
+      clearAllErrors: () => {
+        set((state) => {
+          state.fetchAssetsError = null;
+          state.fetchAssetError = null;
+          state.createAssetError = null;
+          state.updateAssetError = null;
+          state.deleteAssetError = null;
+        });
+      },
 
-        getTotalValue: () => {
-          const { assets } = get();
-          return assets.reduce((total, asset) => {
-            if (asset.status === "Active") {
-              return (
-                total +
-                asset.bought_value +
-                (asset.income || 0) -
-                (asset.expense || 0)
-              );
-            } else {
-              return (
-                total +
-                (asset.sold_value || 0) +
-                (asset.income || 0) -
-                (asset.expense || 0)
-              );
-            }
-          }, 0);
-        },
+      // Utility actions
+      getAssetById: (assetId: string) => {
+        const { assets } = get();
+        return assets.find((asset) => asset.id === assetId);
+      },
 
-        getAssetsByType: (type: string) => {
-          const { assets } = get();
-          return assets.filter((asset) => asset.type === type);
-        },
+      getTotalValue: () => {
+        const { assets } = get();
+        return assets.reduce((total, asset) => {
+          if (asset.status === "Active") {
+            return (
+              total +
+              asset.bought_value +
+              (asset.income || 0) -
+              (asset.expense || 0)
+            );
+          } else {
+            return (
+              total +
+              (asset.sold_value || 0) +
+              (asset.income || 0) -
+              (asset.expense || 0)
+            );
+          }
+        }, 0);
+      },
 
-        getAssetsByStatus: (status: string) => {
-          const { assets } = get();
-          return assets.filter((asset) => asset.status === status);
-        },
+      getAssetsByType: (type: string) => {
+        const { assets } = get();
+        return assets.filter((asset) => asset.type === type);
+      },
 
-        getActiveAssets: () => {
-          const { assets } = get();
-          return assets.filter((asset) => asset.status === "Active");
-        },
+      getAssetsByStatus: (status: string) => {
+        const { assets } = get();
+        return assets.filter((asset) => asset.status === status);
+      },
 
-        getSoldAssets: () => {
-          const { assets } = get();
-          return assets.filter((asset) => asset.status === "Sold");
-        },
-      })),
-      {
-        name: "assets-store",
-        storage: createJSONStorage(() => sessionStorage),
-        partialize: (state) => ({
-          assets: state.assets,
-          selectedAsset: state.selectedAsset,
-        }),
-      }
-    ),
+      getActiveAssets: () => {
+        const { assets } = get();
+        return assets.filter((asset) => asset.status === "Active");
+      },
+
+      getSoldAssets: () => {
+        const { assets } = get();
+        return assets.filter((asset) => asset.status === "Sold");
+      },
+    })),
     {
       name: "assets-store",
     }

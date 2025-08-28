@@ -7,12 +7,28 @@ import {
   LoginResponse,
   UserWithoutPassword,
   DeleteUserResponse,
+  CreateAccountDto,
+  CreateTransactionCategoryDto,
 } from "@fin-compass/types";
 import logger from "../../../config/logger";
+import { AccountsService } from "./accounts.service";
+import { CategoriesService } from "./categories.service";
 
 const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 const prisma = new PrismaClient();
+
+// Helper function to transform Prisma user to UserWithoutPassword type
+const transformUserToResponse = (user: any): UserWithoutPassword => {
+  const { passwordHash, ...userWithoutPassword } = user;
+  return {
+    ...userWithoutPassword,
+    networth: user.networth ? Number(user.networth) : undefined,
+  };
+};
+
+const accountsService = new AccountsService();
+const categoriesService = new CategoriesService();
 
 export class UserService {
   async createUser(userData: CreateUserInput): Promise<UserWithoutPassword> {
@@ -40,12 +56,65 @@ export class UserService {
         },
       });
 
+      const defaultAccount: CreateAccountDto = {
+        name: "Liquid",
+        type: "Savings",
+        balance: 0,
+      };
+
+      // create a default
+      accountsService.create(user.id, defaultAccount);
+
+      const defaultCategories: CreateTransactionCategoryDto[] = [
+        {
+          name: "personal-luxary",
+          type: "Expense",
+          icon: "💎",
+          isSystem: true,
+        },
+        { name: "rent-received", type: "Income", icon: "🏠", isSystem: true },
+        { name: "Cab", type: "Expense", icon: "🚗", isSystem: true },
+        { name: "Electricity", type: "Expense", icon: "⚡", isSystem: true },
+        { name: "junk food", type: "Expense", icon: "🍕", isSystem: true },
+        { name: "food", type: "Expense", icon: "🍽️", isSystem: true },
+        { name: "studies", type: "Expense", icon: "📚", isSystem: true },
+        { name: "electronics", type: "Expense", icon: "📱", isSystem: true },
+        {
+          name: "house investment",
+          type: "Expense",
+          icon: "🏢",
+          isSystem: true,
+        },
+        { name: "office needs", type: "Expense", icon: "💼", isSystem: true },
+        { name: "clothing", type: "Expense", icon: "👕", isSystem: true },
+        { name: "house-luxury", type: "Expense", icon: "🛋️", isSystem: true },
+        { name: "salary", type: "Income", icon: "👛", isSystem: true },
+        { name: "rent-paid", type: "Expense", icon: "🏠", isSystem: true },
+        { name: "taxes", type: "Expense", icon: "🏛️", isSystem: true },
+        { name: "house", type: "Expense", icon: "🏠", isSystem: true },
+        { name: "maid", type: "Expense", icon: "👤", isSystem: true },
+        { name: "mom clothing", type: "Expense", icon: "👚", isSystem: true },
+        { name: "my clothing", type: "Expense", icon: "👕", isSystem: true },
+        {
+          name: "mobile recharge",
+          type: "Expense",
+          icon: "📱",
+          isSystem: true,
+        },
+        { name: "gifting", type: "Expense", icon: "🎁", isSystem: true },
+        { name: "travel", type: "Expense", icon: "✈️", isSystem: true },
+        { name: "health", type: "Expense", icon: "❤️", isSystem: true },
+      ];
+
+      defaultCategories.map((category) => {
+        categoriesService.create(user.id, category);
+      });
+
       logger.info("User created successfully", {
         userId: user.id,
         email: user.email,
       });
-      const { passwordHash: _, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+      return transformUserToResponse(user);
     } catch (error) {
       logger.error("Error creating user", {
         email: userData.email,
@@ -107,8 +176,7 @@ export class UserService {
         throw new Error("User not found");
       }
 
-      const { passwordHash: _, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+      return transformUserToResponse(user);
     } catch (error) {
       logger.error("Error fetching user", {
         userId: id,
@@ -136,8 +204,7 @@ export class UserService {
       });
 
       logger.info("User updated successfully", { userId: id });
-      const { passwordHash: _, ...userWithoutPassword } = user;
-      return userWithoutPassword;
+      return transformUserToResponse(user);
     } catch (error) {
       logger.error("Error updating user", {
         userId: id,
@@ -169,10 +236,7 @@ export class UserService {
     logger.debug("Fetching all users");
     try {
       const users = await prisma.user.findMany();
-      return users.map((user) => {
-        const { passwordHash: _, ...userWithoutPassword } = user;
-        return userWithoutPassword;
-      });
+      return users.map((user) => transformUserToResponse(user));
     } catch (error) {
       logger.error("Error fetching all users", {
         error: error instanceof Error ? error.message : "Unknown error",

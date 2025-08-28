@@ -134,7 +134,7 @@ export class TransactionsController {
         req.user.userId,
         transactionData
       );
-      res.json({
+      res.status(200).json({
         status_code: 200,
         status_txt: "Transaction updated successfully",
         data: { transaction },
@@ -151,7 +151,7 @@ export class TransactionsController {
   async deleteTransaction(req: Request, res: Response) {
     try {
       await transactionsService.delete(req.params.id, req.user.userId);
-      res.status(204).json({
+      res.status(200).json({
         status_code: 204,
         status_txt: "Transaction deleted successfully",
         data: { id: req.params.id },

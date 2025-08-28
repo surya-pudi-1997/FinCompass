@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { devtools, persist, createJSONStorage } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 
 import { CreateAccountDto } from "@fin-compass/types";
 
@@ -84,194 +84,184 @@ const initialState: AccountsState = {
 
 export const useAccountsStore = create<AccountsStore>()(
   devtools(
-    persist(
-      immer((set, get) => ({
-        ...initialState,
+    immer((set, get) => ({
+      ...initialState,
 
-        // Account data actions
-        setAccounts: (accounts: Account[]) => {
-          set((state) => {
-            state.accounts = accounts;
-          });
-        },
+      // Account data actions
+      setAccounts: (accounts: Account[]) => {
+        set((state) => {
+          state.accounts = accounts;
+        });
+      },
 
-        setSelectedAccount: (account: Account | null) => {
-          set((state) => {
-            state.selectedAccount = account;
-          });
-        },
+      setSelectedAccount: (account: Account | null) => {
+        set((state) => {
+          state.selectedAccount = account;
+        });
+      },
 
-        addAccount: (account: Account) => {
-          set((state) => {
-            state.accounts.push(account);
-          });
-        },
+      addAccount: (account: Account) => {
+        set((state) => {
+          state.accounts.push(account);
+        });
+      },
 
-        updateAccount: (accountId: string, updates: Partial<Account>) => {
-          set((state) => {
-            const accountIndex = state.accounts.findIndex(
-              (account) => account.id === accountId
-            );
-            if (accountIndex !== -1) {
-              Object.assign(state.accounts[accountIndex], updates);
-              state.accounts[accountIndex].updatedAt = new Date().toISOString();
-            }
-            // Update selected account if it's the one being updated
-            if (state.selectedAccount?.id === accountId) {
-              Object.assign(state.selectedAccount, updates);
-              state.selectedAccount.updatedAt = new Date().toISOString();
-            }
-          });
-        },
+      updateAccount: (accountId: string, updates: Partial<Account>) => {
+        set((state) => {
+          const accountIndex = state.accounts.findIndex(
+            (account) => account.id === accountId
+          );
+          if (accountIndex !== -1) {
+            Object.assign(state.accounts[accountIndex], updates);
+            state.accounts[accountIndex].updatedAt = new Date().toISOString();
+          }
+          // Update selected account if it's the one being updated
+          if (state.selectedAccount?.id === accountId) {
+            Object.assign(state.selectedAccount, updates);
+            state.selectedAccount.updatedAt = new Date().toISOString();
+          }
+        });
+      },
 
-        removeAccount: (accountId: string) => {
-          set((state) => {
-            state.accounts = state.accounts.filter(
-              (account) => account.id !== accountId
-            );
-            // Clear selected account if it's the one being deleted
-            if (state.selectedAccount?.id === accountId) {
-              state.selectedAccount = null;
-            }
-          });
-        },
-
-        clearAccounts: () => {
-          set((state) => {
-            state.accounts = [];
+      removeAccount: (accountId: string) => {
+        set((state) => {
+          state.accounts = state.accounts.filter(
+            (account) => account.id !== accountId
+          );
+          // Clear selected account if it's the one being deleted
+          if (state.selectedAccount?.id === accountId) {
             state.selectedAccount = null;
-          });
-        },
+          }
+        });
+      },
 
-        // Loading state actions
-        setFetchAccountsLoading: (loading: boolean) => {
-          set((state) => {
-            state.fetchAccountsLoading = loading;
-          });
-        },
+      clearAccounts: () => {
+        set((state) => {
+          state.accounts = [];
+          state.selectedAccount = null;
+        });
+      },
 
-        setFetchAccountLoading: (loading: boolean) => {
-          set((state) => {
-            state.fetchAccountLoading = loading;
-          });
-        },
+      // Loading state actions
+      setFetchAccountsLoading: (loading: boolean) => {
+        set((state) => {
+          state.fetchAccountsLoading = loading;
+        });
+      },
 
-        setCreateAccountLoading: (loading: boolean) => {
-          set((state) => {
-            state.createAccountLoading = loading;
-          });
-        },
+      setFetchAccountLoading: (loading: boolean) => {
+        set((state) => {
+          state.fetchAccountLoading = loading;
+        });
+      },
 
-        setUpdateAccountLoading: (loading: boolean) => {
-          set((state) => {
-            state.updateAccountLoading = loading;
-          });
-        },
+      setCreateAccountLoading: (loading: boolean) => {
+        set((state) => {
+          state.createAccountLoading = loading;
+        });
+      },
 
-        setDeleteAccountLoading: (loading: boolean) => {
-          set((state) => {
-            state.deleteAccountLoading = loading;
-          });
-        },
+      setUpdateAccountLoading: (loading: boolean) => {
+        set((state) => {
+          state.updateAccountLoading = loading;
+        });
+      },
 
-        // Error state actions
-        setFetchAccountsError: (error: string | null) => {
-          set((state) => {
-            state.fetchAccountsError = error;
-          });
-        },
+      setDeleteAccountLoading: (loading: boolean) => {
+        set((state) => {
+          state.deleteAccountLoading = loading;
+        });
+      },
 
-        setFetchAccountError: (error: string | null) => {
-          set((state) => {
-            state.fetchAccountError = error;
-          });
-        },
+      // Error state actions
+      setFetchAccountsError: (error: string | null) => {
+        set((state) => {
+          state.fetchAccountsError = error;
+        });
+      },
 
-        setCreateAccountError: (error: string | null) => {
-          set((state) => {
-            state.createAccountError = error;
-          });
-        },
+      setFetchAccountError: (error: string | null) => {
+        set((state) => {
+          state.fetchAccountError = error;
+        });
+      },
 
-        setUpdateAccountError: (error: string | null) => {
-          set((state) => {
-            state.updateAccountError = error;
-          });
-        },
+      setCreateAccountError: (error: string | null) => {
+        set((state) => {
+          state.createAccountError = error;
+        });
+      },
 
-        setDeleteAccountError: (error: string | null) => {
-          set((state) => {
-            state.deleteAccountError = error;
-          });
-        },
+      setUpdateAccountError: (error: string | null) => {
+        set((state) => {
+          state.updateAccountError = error;
+        });
+      },
 
-        clearFetchAccountsError: () => {
-          set((state) => {
-            state.fetchAccountsError = null;
-          });
-        },
+      setDeleteAccountError: (error: string | null) => {
+        set((state) => {
+          state.deleteAccountError = error;
+        });
+      },
 
-        clearFetchAccountError: () => {
-          set((state) => {
-            state.fetchAccountError = null;
-          });
-        },
+      clearFetchAccountsError: () => {
+        set((state) => {
+          state.fetchAccountsError = null;
+        });
+      },
 
-        clearCreateAccountError: () => {
-          set((state) => {
-            state.createAccountError = null;
-          });
-        },
+      clearFetchAccountError: () => {
+        set((state) => {
+          state.fetchAccountError = null;
+        });
+      },
 
-        clearUpdateAccountError: () => {
-          set((state) => {
-            state.updateAccountError = null;
-          });
-        },
+      clearCreateAccountError: () => {
+        set((state) => {
+          state.createAccountError = null;
+        });
+      },
 
-        clearDeleteAccountError: () => {
-          set((state) => {
-            state.deleteAccountError = null;
-          });
-        },
+      clearUpdateAccountError: () => {
+        set((state) => {
+          state.updateAccountError = null;
+        });
+      },
 
-        clearAllErrors: () => {
-          set((state) => {
-            state.fetchAccountsError = null;
-            state.fetchAccountError = null;
-            state.createAccountError = null;
-            state.updateAccountError = null;
-            state.deleteAccountError = null;
-          });
-        },
+      clearDeleteAccountError: () => {
+        set((state) => {
+          state.deleteAccountError = null;
+        });
+      },
 
-        // Utility actions
-        getAccountById: (accountId: string) => {
-          const { accounts } = get();
-          return accounts.find((account) => account.id === accountId);
-        },
+      clearAllErrors: () => {
+        set((state) => {
+          state.fetchAccountsError = null;
+          state.fetchAccountError = null;
+          state.createAccountError = null;
+          state.updateAccountError = null;
+          state.deleteAccountError = null;
+        });
+      },
 
-        getTotalBalance: () => {
-          const { accounts } = get();
-          return accounts.reduce((total, account) => {
-            return total + (account.balance || 0);
-          }, 0);
-        },
+      // Utility actions
+      getAccountById: (accountId: string) => {
+        const { accounts } = get();
+        return accounts.find((account) => account.id === accountId);
+      },
 
-        getAccountsByType: (type: string) => {
-          const { accounts } = get();
-          return accounts.filter((account) => account.type === type);
-        },
-      })),
-      {
-        name: "accounts-store",
-        storage: createJSONStorage(() => sessionStorage),
-        partialize: (state) => ({
-          accounts: state.accounts,
-          selectedAccount: state.selectedAccount,
-        }),
-      }
-    ),
+      getTotalBalance: () => {
+        const { accounts } = get();
+        return accounts.reduce((total, account) => {
+          return total + (account.balance || 0);
+        }, 0);
+      },
+
+      getAccountsByType: (type: string) => {
+        const { accounts } = get();
+        return accounts.filter((account) => account.type === type);
+      },
+    })),
     {
       name: "accounts-store",
     }

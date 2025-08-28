@@ -137,6 +137,7 @@ export const useFormGenerator = (
         validation.required &&
         (value === "" ||
           value === null ||
+          value === undefined ||
           (typeof value === "boolean" && value === false))
       ) {
         return `${fieldConfig.label} is required.`;

@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { devtools, persist, createJSONStorage } from "zustand/middleware";
+import { devtools } from "zustand/middleware";
 
 import { Category, TransactionCategoryType } from "@fin-compass/types";
 
@@ -81,212 +81,200 @@ const initialState: CategoriesState = {
 
 export const useCategoriesStore = create<CategoriesStore>()(
   devtools(
-    persist(
-      immer((set, get) => ({
-        ...initialState,
+    immer((set, get) => ({
+      ...initialState,
 
-        // Category data actions
-        setCategories: (categories: Category[]) => {
-          set((state) => {
-            state.categories = categories;
-          });
-        },
+      // Category data actions
+      setCategories: (categories: Category[]) => {
+        set((state) => {
+          state.categories = categories;
+        });
+      },
 
-        setSelectedCategory: (category: Category | null) => {
-          set((state) => {
-            state.selectedCategory = category;
-          });
-        },
+      setSelectedCategory: (category: Category | null) => {
+        set((state) => {
+          state.selectedCategory = category;
+        });
+      },
 
-        addCategory: (category: Category) => {
-          set((state) => {
-            state.categories.push(category);
-          });
-        },
+      addCategory: (category: Category) => {
+        set((state) => {
+          state.categories.push(category);
+        });
+      },
 
-        updateCategory: (categoryId: string, updates: Partial<Category>) => {
-          set((state) => {
-            const categoryIndex = state.categories.findIndex(
-              (category) => category.id === categoryId
-            );
-            if (categoryIndex !== -1) {
-              Object.assign(state.categories[categoryIndex], updates);
-            }
-            // Update selected category if it's the one being updated
-            if (state.selectedCategory?.id === categoryId) {
-              Object.assign(state.selectedCategory, updates);
-            }
-          });
-        },
-
-        removeCategory: (categoryId: string) => {
-          set((state) => {
-            state.categories = state.categories.filter(
-              (category) => category.id !== categoryId
-            );
-            // Clear selected category if it's the one being deleted
-            if (state.selectedCategory?.id === categoryId) {
-              state.selectedCategory = null;
-            }
-          });
-        },
-
-        clearCategories: () => {
-          set((state) => {
-            state.categories = [];
-            state.selectedCategory = null;
-          });
-        },
-
-        // Loading state actions
-        setFetchCategoriesLoading: (loading: boolean) => {
-          set((state) => {
-            state.fetchCategoriesLoading = loading;
-          });
-        },
-
-        setFetchCategoryLoading: (loading: boolean) => {
-          set((state) => {
-            state.fetchCategoryLoading = loading;
-          });
-        },
-
-        setCreateCategoryLoading: (loading: boolean) => {
-          set((state) => {
-            state.createCategoryLoading = loading;
-          });
-        },
-
-        setUpdateCategoryLoading: (loading: boolean) => {
-          set((state) => {
-            state.updateCategoryLoading = loading;
-          });
-        },
-
-        setDeleteCategoryLoading: (loading: boolean) => {
-          set((state) => {
-            state.deleteCategoryLoading = loading;
-          });
-        },
-
-        // Error state actions
-        setFetchCategoriesError: (error: string | null) => {
-          set((state) => {
-            state.fetchCategoriesError = error;
-          });
-        },
-
-        setFetchCategoryError: (error: string | null) => {
-          set((state) => {
-            state.fetchCategoryError = error;
-          });
-        },
-
-        setCreateCategoryError: (error: string | null) => {
-          set((state) => {
-            state.createCategoryError = error;
-          });
-        },
-
-        setUpdateCategoryError: (error: string | null) => {
-          set((state) => {
-            state.updateCategoryError = error;
-          });
-        },
-
-        setDeleteCategoryError: (error: string | null) => {
-          set((state) => {
-            state.deleteCategoryError = error;
-          });
-        },
-
-        clearFetchCategoriesError: () => {
-          set((state) => {
-            state.fetchCategoriesError = null;
-          });
-        },
-
-        clearFetchCategoryError: () => {
-          set((state) => {
-            state.fetchCategoryError = null;
-          });
-        },
-
-        clearCreateCategoryError: () => {
-          set((state) => {
-            state.createCategoryError = null;
-          });
-        },
-
-        clearUpdateCategoryError: () => {
-          set((state) => {
-            state.updateCategoryError = null;
-          });
-        },
-
-        clearDeleteCategoryError: () => {
-          set((state) => {
-            state.deleteCategoryError = null;
-          });
-        },
-
-        clearAllErrors: () => {
-          set((state) => {
-            state.fetchCategoriesError = null;
-            state.fetchCategoryError = null;
-            state.createCategoryError = null;
-            state.updateCategoryError = null;
-            state.deleteCategoryError = null;
-          });
-        },
-
-        // Utility actions
-        getCategoryById: (categoryId: string) => {
-          const { categories } = get();
-          return categories.find((category) => category.id === categoryId);
-        },
-
-        getCategoriesByType: (type: TransactionCategoryType) => {
-          const { categories } = get();
-          return categories.filter((category) => category.type === type);
-        },
-
-        getSystemCategories: () => {
-          const { categories } = get();
-          return categories.filter((category) => category.isSystem === true);
-        },
-
-        getUserCategories: () => {
-          const { categories } = get();
-          return categories.filter((category) => category.isSystem !== true);
-        },
-
-        getIncomeCategories: () => {
-          const { categories } = get();
-          return categories.filter((category) => category.type === "Income");
-        },
-
-        getExpenseCategories: () => {
-          const { categories } = get();
-          return categories.filter((category) => category.type === "Expense");
-        },
-
-        getInvestmentCategories: () => {
-          const { categories } = get();
-          return categories.filter(
-            (category) => category.type === "Investment"
+      updateCategory: (categoryId: string, updates: Partial<Category>) => {
+        set((state) => {
+          const categoryIndex = state.categories.findIndex(
+            (category) => category.id === categoryId
           );
-        },
-      })),
-      {
-        name: "categories-store",
-        storage: createJSONStorage(() => sessionStorage),
-        partialize: (state) => ({
-          categories: state.categories,
-          selectedCategory: state.selectedCategory,
-        }),
-      }
-    ),
+          if (categoryIndex !== -1) {
+            Object.assign(state.categories[categoryIndex], updates);
+          }
+          // Update selected category if it's the one being updated
+          if (state.selectedCategory?.id === categoryId) {
+            Object.assign(state.selectedCategory, updates);
+          }
+        });
+      },
+
+      removeCategory: (categoryId: string) => {
+        set((state) => {
+          state.categories = state.categories.filter(
+            (category) => category.id !== categoryId
+          );
+          // Clear selected category if it's the one being deleted
+          if (state.selectedCategory?.id === categoryId) {
+            state.selectedCategory = null;
+          }
+        });
+      },
+
+      clearCategories: () => {
+        set((state) => {
+          state.categories = [];
+          state.selectedCategory = null;
+        });
+      },
+
+      // Loading state actions
+      setFetchCategoriesLoading: (loading: boolean) => {
+        set((state) => {
+          state.fetchCategoriesLoading = loading;
+        });
+      },
+
+      setFetchCategoryLoading: (loading: boolean) => {
+        set((state) => {
+          state.fetchCategoryLoading = loading;
+        });
+      },
+
+      setCreateCategoryLoading: (loading: boolean) => {
+        set((state) => {
+          state.createCategoryLoading = loading;
+        });
+      },
+
+      setUpdateCategoryLoading: (loading: boolean) => {
+        set((state) => {
+          state.updateCategoryLoading = loading;
+        });
+      },
+
+      setDeleteCategoryLoading: (loading: boolean) => {
+        set((state) => {
+          state.deleteCategoryLoading = loading;
+        });
+      },
+
+      // Error state actions
+      setFetchCategoriesError: (error: string | null) => {
+        set((state) => {
+          state.fetchCategoriesError = error;
+        });
+      },
+
+      setFetchCategoryError: (error: string | null) => {
+        set((state) => {
+          state.fetchCategoryError = error;
+        });
+      },
+
+      setCreateCategoryError: (error: string | null) => {
+        set((state) => {
+          state.createCategoryError = error;
+        });
+      },
+
+      setUpdateCategoryError: (error: string | null) => {
+        set((state) => {
+          state.updateCategoryError = error;
+        });
+      },
+
+      setDeleteCategoryError: (error: string | null) => {
+        set((state) => {
+          state.deleteCategoryError = error;
+        });
+      },
+
+      clearFetchCategoriesError: () => {
+        set((state) => {
+          state.fetchCategoriesError = null;
+        });
+      },
+
+      clearFetchCategoryError: () => {
+        set((state) => {
+          state.fetchCategoryError = null;
+        });
+      },
+
+      clearCreateCategoryError: () => {
+        set((state) => {
+          state.createCategoryError = null;
+        });
+      },
+
+      clearUpdateCategoryError: () => {
+        set((state) => {
+          state.updateCategoryError = null;
+        });
+      },
+
+      clearDeleteCategoryError: () => {
+        set((state) => {
+          state.deleteCategoryError = null;
+        });
+      },
+
+      clearAllErrors: () => {
+        set((state) => {
+          state.fetchCategoriesError = null;
+          state.fetchCategoryError = null;
+          state.createCategoryError = null;
+          state.updateCategoryError = null;
+          state.deleteCategoryError = null;
+        });
+      },
+
+      // Utility actions
+      getCategoryById: (categoryId: string) => {
+        const { categories } = get();
+        return categories.find((category) => category.id === categoryId);
+      },
+
+      getCategoriesByType: (type: TransactionCategoryType) => {
+        const { categories } = get();
+        return categories.filter((category) => category.type === type);
+      },
+
+      getSystemCategories: () => {
+        const { categories } = get();
+        return categories.filter((category) => category.isSystem === true);
+      },
+
+      getUserCategories: () => {
+        const { categories } = get();
+        return categories.filter((category) => category.isSystem !== true);
+      },
+
+      getIncomeCategories: () => {
+        const { categories } = get();
+        return categories.filter((category) => category.type === "Income");
+      },
+
+      getExpenseCategories: () => {
+        const { categories } = get();
+        return categories.filter((category) => category.type === "Expense");
+      },
+
+      getInvestmentCategories: () => {
+        const { categories } = get();
+        return categories.filter((category) => category.type === "Investment");
+      },
+    })),
     {
       name: "categories-store",
     }

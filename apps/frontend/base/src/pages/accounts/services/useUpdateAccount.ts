@@ -14,7 +14,7 @@ interface Account extends CreateAccountDto {
 interface ApiResponse<T = unknown> {
   status_code: number;
   status_txt: string;
-  data: { account: T };
+  payload: { account: T };
 }
 
 const useUpdateAccountService = () => {
@@ -32,7 +32,7 @@ const useUpdateAccountService = () => {
     const apiConfig = {
       method: API_METHODS.PUT,
       url: `${API_ENDPOINTS.UPDATE_ACCOUNT}/${accountId}`,
-      data: accountData,
+      payload: accountData,
     };
 
     const externalStatusHandlers = {

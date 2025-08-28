@@ -22,7 +22,7 @@ const useCreateAssetService = () => {
     const apiConfig = {
       method: API_METHODS.POST,
       url: API_ENDPOINTS.CREATE_ASSET,
-      data: assetData,
+      payload: assetData,
     };
 
     const externalStatusHandlers = {

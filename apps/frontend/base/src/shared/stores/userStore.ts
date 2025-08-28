@@ -104,7 +104,7 @@ export const useUserStore = create<UserStore>()(
           set((state) => {
             if (state.user) {
               Object.assign(state.user, updates);
-              state.user.updatedAt = new Date();
+              state.user.updatedAt = new Date().toISOString();
             }
           });
         },

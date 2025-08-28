@@ -2,7 +2,7 @@ import { useApiRequest } from "@/shared/libs/api/useApiRequest";
 import { API_ENDPOINTS } from "@/shared/constants/api";
 import { API_METHODS } from "@/shared/constants/api";
 import { useCategoriesStore } from "@/shared/stores";
-import { Category } from "@fin-compass/types";
+import { TransactionCategory } from "@fin-compass/types";
 
 interface ApiResponse<T = unknown> {
   status_code: number;
@@ -31,6 +31,7 @@ const useGetCategoriesService = () => {
           status_txt: "Success",
           callback: (response: ApiResponse<Category[]>) => {
             console.log("Categories fetch successful:", response);
+            console.log({ categories: response?.data?.categories });
             setCategories(response?.data?.categories || []);
             setFetchCategoriesError(null);
           },

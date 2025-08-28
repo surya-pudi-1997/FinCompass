@@ -2,13 +2,11 @@ import { useApiRequest } from "@/shared/libs/api/useApiRequest";
 import { API_ENDPOINTS } from "@/shared/constants/api";
 import { API_METHODS } from "@/shared/constants/api";
 import { useTransactionsStore } from "@/shared/stores";
-import { CreateTransactionDto, Transaction } from "@fin-compass/types";
-
-interface ApiResponse<T = unknown> {
-  status_code: number;
-  status_txt: string;
-  data: { transaction: T };
-}
+import {
+  CreateTransactionDto,
+  ApiResponse,
+  TransactionResponse,
+} from "@fin-compass/types";
 
 const useCreateTransactionService = () => {
   const {
@@ -18,9 +16,9 @@ const useCreateTransactionService = () => {
   } = useTransactionsStore();
 
   const { apiRequestController, cancelAPIRequest } = useApiRequest<
-    ApiResponse<Transaction>
+    ApiResponse<TransactionResponse>
   >(
-    { cancelAPIOnUnmount: true },
+    { cancelAPIOnUnmount: false },
     { loaderAction: setCreateTransactionLoading }
   );
 
@@ -28,7 +26,7 @@ const useCreateTransactionService = () => {
     const apiConfig = {
       method: API_METHODS.POST,
       url: API_ENDPOINTS.CREATE_TRANSACTION,
-      data: transactionData,
+      payload: transactionData,
     };
 
     const externalStatusHandlers = {
@@ -36,7 +34,7 @@ const useCreateTransactionService = () => {
         {
           status_code: 201,
           status_txt: "Transaction created successfully",
-          callback: (response: ApiResponse<Transaction>) => {
+          callback: (response: ApiResponse<TransactionResponse>) => {
             console.log("Transaction creation successful:", response);
             addTransaction(response?.data?.transaction);
             setCreateTransactionError(null);
@@ -45,7 +43,7 @@ const useCreateTransactionService = () => {
         {
           status_code: 400,
           status_txt: "Validation error",
-          callback: (response: ApiResponse<Transaction>) => {
+          callback: (response: ApiResponse<TransactionResponse>) => {
             console.error("Validation error:", response);
             setCreateTransactionError("Please check your input and try again");
           },

@@ -117,7 +117,7 @@ export class AssetsController {
   async deleteAsset(req: Request, res: Response) {
     try {
       await assetsService.delete(req.params.id, req.user.userId);
-      res.status(204).json({
+      res.status(200).json({
         status_code: 204,
         status_txt: "Asset deleted successfully",
         data: { id: req.params.id },
