@@ -6,76 +6,71 @@ import useRegisterService from "./services/useRegisterService";
 import { routes } from "@/router/routes";
 import type { CreateUserInput } from "@fin-compass/types";
 
+const CURRENCY_OPTIONS: { value: string; label: string }[] = [
+  { value: "USD", label: "US Dollar (USD)" },
+  { value: "EUR", label: "Euro (EUR)" },
+  { value: "GBP", label: "British Pound (GBP)" },
+  { value: "JPY", label: "Japanese Yen (JPY)" },
+  { value: "CAD", label: "Canadian Dollar (CAD)" },
+  { value: "AUD", label: "Australian Dollar (AUD)" },
+  { value: "CHF", label: "Swiss Franc (CHF)" },
+  { value: "CNY", label: "Chinese Yuan (CNY)" },
+  { value: "INR", label: "Indian Rupee (INR)" },
+];
+
 const REGISTER_FORM_FIELDS = [
   {
     name: "fullName",
-    type: "text" as const,
+    type: "text",
     label: "Full Name",
     placeholder: "Enter your full name",
     validation: {
-      required: true,
-      minlength: 2,
-      maxlength: 100,
+      required: "Full name is required",
+      minLength: { value: 2, message: "Name must be at least 2 characters" },
+      maxLength: { value: 100, message: "Name cannot exceed 100 characters" },
     },
   },
   {
     name: "email",
-    type: "email" as const,
+    type: "email",
     label: "Email Address",
     placeholder: "Enter your email address",
     validation: {
-      required: true,
-      email: true,
+      required: "Email is required",
+      pattern: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
     },
   },
   {
     name: "password",
-    type: "password" as const,
+    type: "password",
     label: "Password",
     placeholder: "Create a password",
     validation: {
-      required: true,
-      minlength: 8,
-      custom: (value: unknown) => {
-        const password = value as string;
-        if (!/(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/.test(password)) {
-          return "Password must contain at least one uppercase letter, one lowercase letter, and one number";
-        }
-        return null;
+      required: "Password is required",
+      minLength: {
+        value: 8,
+        message: "Password must be at least 8 characters",
       },
+      pattern: /(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/,
     },
   },
   {
     name: "confirmPassword",
-    type: "password" as const,
+    type: "password",
     label: "Confirm Password",
     placeholder: "Confirm your password",
     validation: {
-      required: true,
-      custom: (_value: unknown) => {
-        // This will be handled differently in the form submission
-        return null;
-      },
+      required: "Please confirm your password",
     },
   },
   {
     name: "preferredCurrency",
-    type: "select" as const,
+    type: "select",
     label: "Preferred Currency",
     placeholder: "Select your preferred currency",
-    options: [
-      { value: "USD", label: "US Dollar (USD)" },
-      { value: "EUR", label: "Euro (EUR)" },
-      { value: "GBP", label: "British Pound (GBP)" },
-      { value: "JPY", label: "Japanese Yen (JPY)" },
-      { value: "CAD", label: "Canadian Dollar (CAD)" },
-      { value: "AUD", label: "Australian Dollar (AUD)" },
-      { value: "CHF", label: "Swiss Franc (CHF)" },
-      { value: "CNY", label: "Chinese Yuan (CNY)" },
-      { value: "INR", label: "Indian Rupee (INR)" },
-    ],
+    options: CURRENCY_OPTIONS,
     validation: {
-      required: true,
+      required: "Please select a currency",
     },
   },
 ];

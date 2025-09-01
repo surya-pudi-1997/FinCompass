@@ -7,6 +7,7 @@ import {
   ApiResponse,
   TransactionResponse,
 } from "@fin-compass/types";
+import useGetTransactionsService from "./useGetTransactions";
 
 const useCreateTransactionService = () => {
   const {
@@ -14,6 +15,8 @@ const useCreateTransactionService = () => {
     setCreateTransactionError,
     setCreateTransactionLoading,
   } = useTransactionsStore();
+
+  const { getTransactions } = useGetTransactionsService();
 
   const { apiRequestController, cancelAPIRequest } = useApiRequest<
     ApiResponse<TransactionResponse>
@@ -38,6 +41,7 @@ const useCreateTransactionService = () => {
             console.log("Transaction creation successful:", response);
             addTransaction(response?.data?.transaction);
             setCreateTransactionError(null);
+            getTransactions();
           },
         },
         {

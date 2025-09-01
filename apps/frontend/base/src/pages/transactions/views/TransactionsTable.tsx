@@ -10,7 +10,11 @@ import {
 } from "lucide-react";
 import { toast } from "sonner";
 
-import { Transaction, TransactionType } from "@fin-compass/types";
+import {
+  CreateTransactionDto,
+  Transaction,
+  TransactionType,
+} from "@fin-compass/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -40,6 +44,8 @@ import {
   useGetTransactionsService,
   useDeleteTransactionService,
   useGetCategoriesService,
+  useUpdateTransactionService,
+  useCreateTransactionService,
 } from "../services";
 import { useGetAccountsService } from "../../accounts/services";
 import { useGetAssetsService } from "../../assets/services";
@@ -75,6 +81,22 @@ export const TransactionsTable: React.FC = () => {
   const { getAccounts } = useGetAccountsService();
   const { getAssets } = useGetAssetsService();
   const { getCategories } = useGetCategoriesService();
+
+  const { createTransaction } = useCreateTransactionService();
+  const { updateTransaction } = useUpdateTransactionService();
+
+  const handleSubmit = (
+    isEditing: boolean,
+    formData: CreateTransactionDto,
+    id: string
+  ) => {
+    if (isEditing) {
+      updateTransaction(id, formData);
+    } else {
+      createTransaction(formData);
+    }
+    setIsFormOpen(false);
+  };
 
   // Create lookup maps for efficient display
   const accountsMap = useMemo(
@@ -380,6 +402,7 @@ export const TransactionsTable: React.FC = () => {
         }
         body={
           <TransactionForm
+            onSubmit={handleSubmit}
             transaction={editingTransaction}
             onSuccess={handleFormClose}
             onCancel={handleFormClose}

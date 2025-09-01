@@ -1,12 +1,21 @@
-import { useLocation } from "react-router";
+import { useLocation, useNavigate } from "react-router";
 import { routes } from "@/router/routes";
-import { TrendingUp } from "lucide-react";
+import { TrendingUp, LogOut } from "lucide-react";
+import { useUserStore } from "@/shared/stores/userStore";
 
 const Header = () => {
   const location = useLocation();
+  const { logout } = useUserStore();
+
+  const navigate = useNavigate();
 
   const isActiveRoute = (route: string) => {
     return location.pathname === route;
+  };
+
+  const handleLogout = () => {
+    logout();
+    navigate("/");
   };
 
   return (
@@ -64,6 +73,15 @@ const Header = () => {
             >
               Analyze
             </a>
+          </li>
+          <li>
+            <button
+              onClick={handleLogout}
+              className="flex items-center space-x-1 hover:text-red-600"
+            >
+              <LogOut className="h-4 w-4" />
+              <span>Logout</span>
+            </button>
           </li>
         </ul>
       </nav>

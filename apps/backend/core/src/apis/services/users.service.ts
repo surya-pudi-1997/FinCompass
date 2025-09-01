@@ -1,4 +1,4 @@
-import { PrismaClient } from "../../../generated/prisma";
+import { PrismaClient, Prisma } from "../../../generated/prisma";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {
@@ -18,11 +18,26 @@ const JWT_SECRET = process.env.JWT_SECRET || "your-secret-key";
 
 const prisma = new PrismaClient();
 
+// Define the select object for user queries to exclude password
+const userSelect = {
+  id: true,
+  email: true,
+  fullName: true,
+  preferredCurrency: true,
+  isActive: true,
+  networth: true,
+  lastLogin: true,
+  createdAt: true,
+  updatedAt: true,
+  passwordHash: false,
+} as const;
+
 // Helper function to transform Prisma user to UserWithoutPassword type
-const transformUserToResponse = (user: any): UserWithoutPassword => {
-  const { passwordHash, ...userWithoutPassword } = user;
+const transformUserToResponse = (
+  user: Prisma.UserGetPayload<{ select: typeof userSelect }>
+): UserWithoutPassword => {
   return {
-    ...userWithoutPassword,
+    ...user,
     networth: user.networth ? Number(user.networth) : undefined,
   };
 };
@@ -60,6 +75,7 @@ export class UserService {
         name: "Liquid",
         type: "Savings",
         balance: 0,
+        isSystem: true,
       };
 
       // create a default
@@ -67,12 +83,13 @@ export class UserService {
 
       const defaultCategories: CreateTransactionCategoryDto[] = [
         {
-          name: "personal-luxary",
+          name: "luxary",
           type: "Expense",
           icon: "💎",
           isSystem: true,
         },
         { name: "rent-received", type: "Income", icon: "🏠", isSystem: true },
+        { name: "Returns", type: "Income", icon: "💸", isSystem: true },
         { name: "Cab", type: "Expense", icon: "🚗", isSystem: true },
         { name: "Electricity", type: "Expense", icon: "⚡", isSystem: true },
         { name: "junk food", type: "Expense", icon: "🍕", isSystem: true },
@@ -92,7 +109,7 @@ export class UserService {
         { name: "rent-paid", type: "Expense", icon: "🏠", isSystem: true },
         { name: "taxes", type: "Expense", icon: "🏛️", isSystem: true },
         { name: "house", type: "Expense", icon: "🏠", isSystem: true },
-        { name: "maid", type: "Expense", icon: "👤", isSystem: true },
+        { name: "maid", type: "Expense", icon: "🧑‍🍳", isSystem: true },
         { name: "mom clothing", type: "Expense", icon: "👚", isSystem: true },
         { name: "my clothing", type: "Expense", icon: "👕", isSystem: true },
         {
@@ -104,6 +121,11 @@ export class UserService {
         { name: "gifting", type: "Expense", icon: "🎁", isSystem: true },
         { name: "travel", type: "Expense", icon: "✈️", isSystem: true },
         { name: "health", type: "Expense", icon: "❤️", isSystem: true },
+        { name: "Real Estate", type: "Investment", icon: "🏨", isSystem: true },
+        { name: "Vehicle", type: "Investment", icon: "🚗", isSystem: true },
+        { name: "Stock", type: "Investment", icon: "💹", isSystem: true },
+        { name: "Bond", type: "Investment", icon: "📜", isSystem: true },
+        { name: "Other", type: "Investment", icon: "🤷‍♂️", isSystem: true },
       ];
 
       defaultCategories.map((category) => {

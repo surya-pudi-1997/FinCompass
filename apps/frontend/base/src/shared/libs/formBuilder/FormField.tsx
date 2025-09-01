@@ -97,7 +97,7 @@ const FormField: React.FC<FormFieldProps> = ({
               id={name}
               name={name}
               type="checkbox"
-              checked={checked}
+              checked={checked || false}
               onChange={onChange}
               onBlur={onBlur}
               required={required}
@@ -119,7 +119,7 @@ const FormField: React.FC<FormFieldProps> = ({
       case "radio":
         return (
           <div className="space-y-2">
-            {options?.map((option) => (
+            {options?.map((option, optionId) => (
               <label
                 key={option.value}
                 className="flex items-center space-x-2 cursor-pointer"
@@ -128,7 +128,7 @@ const FormField: React.FC<FormFieldProps> = ({
                   type="radio"
                   name={name}
                   value={option.value}
-                  checked={value === option.value}
+                  checked={value ? value === option.value : optionId === 0}
                   onChange={onChange}
                   onBlur={onBlur}
                   required={required}

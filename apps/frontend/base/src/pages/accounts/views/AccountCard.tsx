@@ -91,15 +91,17 @@ const AccountCard: React.FC<AccountCardProps> = ({
               >
                 <Edit className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setShowDeleteModal(true)}
-                disabled={isDeleting}
-                className="h-8 w-8 text-destructive hover:text-destructive"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
+              {account.isSystem ? null : (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowDeleteModal(true)}
+                  disabled={isDeleting}
+                  className="h-8 w-8 text-destructive hover:text-destructive"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              )}
             </div>
           </CardAction>
         </div>

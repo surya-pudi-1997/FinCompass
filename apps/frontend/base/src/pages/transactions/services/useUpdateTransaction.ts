@@ -3,6 +3,7 @@ import { API_ENDPOINTS } from "@/shared/constants/api";
 import { API_METHODS } from "@/shared/constants/api";
 import { useTransactionsStore } from "@/shared/stores";
 import { UpdateTransactionDto, Transaction } from "@fin-compass/types";
+import useGetTransactionsService from "./useGetTransactions";
 
 interface ApiResponse<T = unknown> {
   status_code: number;
@@ -16,6 +17,8 @@ const useUpdateTransactionService = () => {
     setUpdateTransactionError,
     setUpdateTransactionLoading,
   } = useTransactionsStore();
+
+  const { getTransactions } = useGetTransactionsService();
 
   const { apiRequestController, cancelAPIRequest } = useApiRequest<
     ApiResponse<Transaction>
@@ -45,6 +48,7 @@ const useUpdateTransactionService = () => {
               transactionId,
               response?.data?.transaction
             );
+            getTransactions();
             setUpdateTransactionError(null);
           },
         },

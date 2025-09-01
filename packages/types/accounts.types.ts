@@ -12,6 +12,7 @@ export interface CreateAccountDto {
   type: AccountType;
   balance?: number;
   encrypted_data?: string;
+  isSystem?: boolean;
 }
 
 export interface UpdateAccountDto extends Partial<CreateAccountDto> {}

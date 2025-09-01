@@ -16,7 +16,7 @@ export interface CreateTransactionDto {
   timestamp: Date;
 }
 
-export interface UpdateTransactionDto extends Partial<CreateTransactionDto> {}
+export type UpdateTransactionDto = CreateTransactionDto;
 
 export interface Transaction extends CreateTransactionDto {
   id: string;

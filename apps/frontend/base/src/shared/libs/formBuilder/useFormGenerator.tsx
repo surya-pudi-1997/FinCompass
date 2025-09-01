@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from "react";
+import { useState, useCallback } from "react";
 
 // TypeScript interface definitions
 interface FieldValidation {
@@ -9,7 +9,14 @@ interface FieldValidation {
   maxlength?: number;
   pattern?: string;
   email?: boolean;
-  custom?: (value: unknown) => string | null;
+  custom?: (
+    formData: Record<string, unknown>,
+    error: string | null,
+    errorList: string[]
+  ) => {
+    error: string | null;
+    errorList: string[];
+  };
 }
 
 interface FieldOption {
@@ -39,6 +46,7 @@ interface FieldConfig {
 interface FormConfig {
   formName: string;
   fields: FieldConfig[];
+  initialValues?: Record<string, unknown>;
   onSubmit?: (data: Record<string, unknown>) => Promise<void> | void;
 }
 
@@ -84,53 +92,62 @@ interface UseFormGeneratorReturn {
 export const useFormGenerator = (
   config: FormConfig
 ): UseFormGeneratorReturn => {
-  // Initialize formData with default values from the config
-  const initialData = useMemo(
-    () =>
-      config.fields.reduce(
-        (acc: Record<string, unknown>, field: FieldConfig) => {
-          acc[field.name] =
-            field.defaultValue !== undefined ? field.defaultValue : "";
-          // Special handling for checkbox/radio if needed, default to false or first option
-          if (field.type === "checkbox")
-            acc[field.name] = field.defaultValue || false;
-          if (
-            field.type === "radio" &&
-            field.options &&
-            field.options.length > 0
-          ) {
-            acc[field.name] = field.defaultValue || field.options[0].value;
-          }
-          return acc;
-        },
-        {}
-      ),
-    [config.fields]
-  );
+  // Initialize default values from field configs
+  // useMemo(() => {
+  //   return config.fields.reduce(
+  //     (acc: Record<string, unknown>, field: FieldConfig) => {
+  //       if (field.type === "checkbox") {
+  //         acc[field.name] = field.defaultValue ?? false;
+  //       } else if (
+  //         field.type === "radio" &&
+  //         field.options &&
+  //         field.options.length > 0
+  //       ) {
+  //         acc[field.name] = field.defaultValue ?? field.options[0].value;
+  //       } else {
+  //         acc[field.name] = field.defaultValue ?? "";
+  //       }
+  //       return acc;
+  //     },
+  //     {}
+  //   );
+  // }, [config.fields]); // Only depends on fields config
 
-  const [formData, setFormData] =
-    useState<Record<string, unknown>>(initialData);
+  const [formData, setFormData] = useState<Record<string, unknown>>(
+    config.initialValues || {}
+  );
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
-  // Effect to re-initialize form data if config changes
-  useEffect(() => {
-    setFormData(initialData);
-    setErrors({});
-    setIsSubmitting(false);
-  }, [initialData]);
+  // Effect to update form data when initialValues change
+  // useEffect(() => {
+  //   if (config.initialValues) {
+  //     setFormData({
+  //       // ...defaultValues,
+  //       // ...config.initialValues,
+  //     });
+  //     setErrors({});
+  //   }
+  // }, [config.initialValues]);
 
   /**
    * Validates a single field based on its configuration.
    */
   const validateField = useCallback(
-    (name: string, value: unknown): string | null => {
+    (
+      name: string,
+      value: unknown,
+      formData: Record<string, unknown>
+    ): string | null => {
       const fieldConfig = config.fields.find(
         (f: FieldConfig) => f.name === name
       );
       if (!fieldConfig || !fieldConfig.validation) return null;
 
       const validation = fieldConfig.validation;
+
+      let errorList = [];
+      let error: string | null = null;
 
       // Required validation
       if (
@@ -140,7 +157,8 @@ export const useFormGenerator = (
           value === undefined ||
           (typeof value === "boolean" && value === false))
       ) {
-        return `${fieldConfig.label} is required.`;
+        errorList.push(`${fieldConfig.label} is required.`);
+        error = `${fieldConfig.label} is required.`;
       }
 
       // Type-specific validations
@@ -151,33 +169,48 @@ export const useFormGenerator = (
         case "password":
           if (typeof value === "string") {
             if (validation.minlength && value.length < validation.minlength) {
-              return `${fieldConfig.label} must be at least ${validation.minlength} characters.`;
+              errorList.push(
+                `${fieldConfig.label} must be at least ${validation.minlength} characters.`
+              );
+              error = `${fieldConfig.label} must be at least ${validation.minlength} characters.`;
             }
             if (validation.maxlength && value.length > validation.maxlength) {
-              return `${fieldConfig.label} must be at most ${validation.maxlength} characters.`;
+              errorList.push(
+                `${fieldConfig.label} must be at most ${validation.maxlength} characters.`
+              );
+              error = `${fieldConfig.label} must be at most ${validation.maxlength} characters.`;
             }
             if (
               validation.pattern &&
               !new RegExp(validation.pattern).test(value)
             ) {
-              return `${fieldConfig.label} format is invalid.`;
+              errorList.push(`${fieldConfig.label} format is invalid.`);
+              error = `${fieldConfig.label} format is invalid.`;
             }
             if (validation.email && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-              return `Please enter a valid email address.`;
+              errorList.push(`Please enter a valid email address.`);
+              error = `Please enter a valid email address.`;
             }
           }
           break;
         case "number":
           const numValue = parseFloat(value as string);
           if (validation.required && (value === "" || isNaN(numValue))) {
-            return `${fieldConfig.label} must be a number.`;
+            errorList.push(`${fieldConfig.label} must be a number.`);
+            error = `${fieldConfig.label} must be a number.`;
           }
           if (!isNaN(numValue)) {
             if (validation.min !== undefined && numValue < validation.min) {
-              return `${fieldConfig.label} must be at least ${validation.min}.`;
+              errorList.push(
+                `${fieldConfig.label} must be at least ${validation.min}.`
+              );
+              error = `${fieldConfig.label} must be at least ${validation.min}.`;
             }
             if (validation.max !== undefined && numValue > validation.max) {
-              return `${fieldConfig.label} must be at most ${validation.max}.`;
+              errorList.push(
+                `${fieldConfig.label} must be at most ${validation.max}.`
+              );
+              error = `${fieldConfig.label} must be at most ${validation.max}.`;
             }
           }
           break;
@@ -187,14 +220,21 @@ export const useFormGenerator = (
             validation.required &&
             (value === "" || isNaN(dateValue.getTime()))
           ) {
-            return `${fieldConfig.label} must be a valid date.`;
+            errorList.push(`${fieldConfig.label} must be a valid date.`);
+            error = `${fieldConfig.label} must be a valid date.`;
           }
           if (!isNaN(dateValue.getTime())) {
             if (validation.min && dateValue < new Date(validation.min)) {
-              return `${fieldConfig.label} must be on or after ${validation.min}.`;
+              errorList.push(
+                `${fieldConfig.label} must be on or after ${validation.min}.`
+              );
+              error = `${fieldConfig.label} must be on or after ${validation.min}.`;
             }
             if (validation.max && dateValue > new Date(validation.max)) {
-              return `${fieldConfig.label} must be on or before ${validation.max}.`;
+              errorList.push(
+                `${fieldConfig.label} must be on or before ${validation.max}.`
+              );
+              error = `${fieldConfig.label} must be on or before ${validation.max}.`;
             }
           }
           break;
@@ -202,8 +242,11 @@ export const useFormGenerator = (
 
       // Custom validation
       if (validation.custom) {
-        const customError = validation.custom(value);
-        if (customError) return customError;
+        ({ error, errorList } = validation.custom(formData, error, errorList));
+      }
+
+      if (error) {
+        return error;
       }
 
       return null;
@@ -219,7 +262,7 @@ export const useFormGenerator = (
     const newErrors: Record<string, string> = {};
 
     config.fields.forEach((field: FieldConfig) => {
-      const error = validateField(field.name, formData[field.name]);
+      const error = validateField(field.name, formData[field.name], formData);
       if (error) {
         newErrors[field.name] = error;
         isValid = false;
@@ -268,7 +311,7 @@ export const useFormGenerator = (
       const { name, value, type } = e.target;
       const checked = "checked" in e.target ? e.target.checked : false;
       const fieldValue = type === "checkbox" ? checked : value;
-      const error = validateField(name, fieldValue);
+      const error = validateField(name, fieldValue, formData);
 
       setErrors((prevErrors: Record<string, string>) => {
         const newErrors = { ...prevErrors };
@@ -311,10 +354,12 @@ export const useFormGenerator = (
    * Resets the form to its initial state.
    */
   const resetForm = useCallback(() => {
-    setFormData(initialData);
+    setFormData({
+      ...(config.initialValues || {}),
+    });
     setErrors({});
     setIsSubmitting(false);
-  }, [initialData]);
+  }, [config.initialValues]);
 
   /**
    * Get field props for a specific field by name.
@@ -333,9 +378,10 @@ export const useFormGenerator = (
         label: fieldConfig.label,
         placeholder: fieldConfig.placeholder,
         value:
-          fieldConfig.type === "checkbox" ? false : (value as string | number),
-        checked:
-          fieldConfig.type === "checkbox" ? (value as boolean) : undefined,
+          fieldConfig.type === "checkbox"
+            ? Boolean(value)
+            : (value as string | number),
+        checked: fieldConfig.type === "checkbox" ? Boolean(value) : undefined,
         options: fieldConfig.options,
         required: fieldConfig.validation?.required,
         disabled: isSubmitting,

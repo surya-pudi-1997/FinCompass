@@ -19,6 +19,12 @@ export class CategoriesService {
     });
   }
 
+  async findByNameAndType(name: string, type: string, userId: string) {
+    return prisma.transactionCategory.findFirst({
+      where: { name, userId, type },
+    });
+  }
+
   async create(userId: string, data: CreateTransactionCategoryDto) {
     return prisma.transactionCategory.create({
       data: {

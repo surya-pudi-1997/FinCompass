@@ -38,25 +38,40 @@ model Account {
   createdAt     DateTime      @default(now()) @db.Timestamptz(6)
   user          User          @relation(fields: [userId], references: [id])
   transactions  Transaction[]
+  assetsBought  Asset[]       @relation("AssetBoughtFrom")
+  assetsSold    Asset[]       @relation("AssetSoldTo")
 
   @@index([userId])
 }
 
 model Asset {
-  id           String        @id @default(uuid()) @db.Uuid
-  userId       String        @db.Uuid
-  name         String
-  type         String
-  bought_value Decimal       @db.Decimal
-  sold_value   Decimal?      @db.Decimal
-  expense      Decimal       @default(0) @db.Decimal
-  income       Decimal       @default(0) @db.Decimal
-  status       String
-  createdAt    DateTime      @default(now()) @db.Timestamptz(6)
-  user         User          @relation(fields: [userId], references: [id])
-  transactions Transaction[]
+  id                   String        @id @default(uuid()) @db.Uuid
+  userId               String        @db.Uuid
+  name                 String
+  type                 String
+  bought_value        Decimal       @db.Decimal
+  sold_value          Decimal?      @db.Decimal
+  expense             Decimal       @default(0) @db.Decimal
+  income              Decimal       @default(0) @db.Decimal
+  status              String
+  bought_from         String?       @db.Uuid
+  sold_to             String?       @db.Uuid
+  is_existing         Boolean?      @default(false)
+  bought_transaction  String?       @db.Uuid @unique
+  sold_transaction    String?       @db.Uuid @unique
+  createdAt           DateTime      @default(now()) @db.Timestamptz(6)
+  user                User          @relation(fields: [userId], references: [id])
+  transactions        Transaction[]
+  boughtFrom          Account?      @relation("AssetBoughtFrom", fields: [bought_from], references: [id])
+  soldTo              Account?      @relation("AssetSoldTo", fields: [sold_to], references: [id])
+  boughtTransaction   Transaction?  @relation("AssetBoughtTransaction", fields: [bought_transaction], references: [id])
+  soldTransaction     Transaction?  @relation("AssetSoldTransaction", fields: [sold_transaction], references: [id])
 
   @@index([userId])
+  @@index([bought_from])
+  @@index([sold_to])
+  @@index([bought_transaction])
+  @@index([sold_transaction])
 }
 
 model TransactionCategory {
@@ -76,19 +91,21 @@ model TransactionCategory {
 }
 
 model Transaction {
-  id         String              @id @default(uuid()) @db.Uuid
-  userId     String              @db.Uuid
-  accountId  String              @db.Uuid
-  assetId    String?             @db.Uuid
-  type       String
-  amount     Decimal             @db.Decimal
-  categoryId String              @db.Uuid
-  note       String?
-  timestamp  DateTime            @db.Timestamptz(6)
-  account    Account             @relation(fields: [accountId], references: [id])
-  asset      Asset?              @relation(fields: [assetId], references: [id])
-  category   TransactionCategory @relation(fields: [categoryId], references: [id])
-  user       User                @relation(fields: [userId], references: [id])
+  id                  String              @id @default(uuid()) @db.Uuid
+  userId              String              @db.Uuid
+  accountId           String              @db.Uuid
+  assetId             String?             @db.Uuid
+  type                String
+  amount              Decimal             @db.Decimal
+  categoryId          String              @db.Uuid
+  note                String?
+  timestamp           DateTime            @db.Timestamptz(6)
+  account             Account             @relation(fields: [accountId], references: [id])
+  asset               Asset?              @relation(fields: [assetId], references: [id])
+  category            TransactionCategory @relation(fields: [categoryId], references: [id])
+  user                User                @relation(fields: [userId], references: [id])
+  assetBought         Asset?              @relation("AssetBoughtTransaction")
+  assetSold          Asset?              @relation("AssetSoldTransaction")
 
   @@index([userId])
   @@index([accountId])
