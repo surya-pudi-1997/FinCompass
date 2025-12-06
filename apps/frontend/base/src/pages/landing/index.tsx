@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router";
+import Sample from "./sample";
 import { ArrowRight, TrendingUp, Shield, Target } from "lucide-react";
 
 const LandingPage = () => {
@@ -107,6 +108,7 @@ const LandingPage = () => {
                   Your financial data is protected with bank-level security and
                   encryption.
                 </p>
+                <Sample />
               </div>
             </div>
           </div>

@@ -14,7 +14,6 @@ model User {
   passwordHash      String
   fullName          String
   preferredCurrency String
-  networth          Decimal?              @db.Decimal
   createdAt         DateTime              @default(now()) @db.Timestamptz(6)
   updatedAt         DateTime              @updatedAt @db.Timestamptz(6)
   isActive          Boolean               @default(true)
@@ -93,17 +92,18 @@ model TransactionCategory {
 model Transaction {
   id                  String              @id @default(uuid()) @db.Uuid
   userId              String              @db.Uuid
-  accountId           String              @db.Uuid
-  assetId             String?             @db.Uuid
   type                String
   amount              Decimal             @db.Decimal
-  categoryId          String              @db.Uuid
   note                String?
+  accountId           String              @db.Uuid
+  assetId             String?             @db.Uuid
+  isSystem            Boolean             @default(false)
+  categoryId          String              @db.Uuid
   timestamp           DateTime            @db.Timestamptz(6)
+  user                User                @relation(fields: [userId], references: [id])
   account             Account             @relation(fields: [accountId], references: [id])
   asset               Asset?              @relation(fields: [assetId], references: [id])
   category            TransactionCategory @relation(fields: [categoryId], references: [id])
-  user                User                @relation(fields: [userId], references: [id])
   assetBought         Asset?              @relation("AssetBoughtTransaction")
   assetSold          Asset?              @relation("AssetSoldTransaction")
 

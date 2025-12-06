@@ -2,7 +2,6 @@ things to be taken care of
 
 Accounts
     accounts are tested for normal flow
-    accounts delete should be removed for isSystem flag is true
     when balance is 0 set it to black color
     updated invalid date should be fixed in accounts card
 

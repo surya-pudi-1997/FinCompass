@@ -4,13 +4,9 @@ import {
   TransactionTypeEnum,
   UpdateTransactionDto,
 } from "@fin-compass/types";
-import { updateNetworth } from "../../utils/networth.util";
-import { handleAssetTransaction } from "../../utils/asset.util";
-import logger from "../../../config/logger";
 import { AccountsService } from "./accounts.service";
 
 const prisma = new PrismaClient();
-const accountsService = new AccountsService();
 
 export class TransactionsService {
   async findAll(userId: string) {
@@ -76,33 +72,6 @@ export class TransactionsService {
         },
       });
 
-      // Update networth based on transaction type
-      switch (data.type) {
-        case TransactionTypeEnum.Income:
-        case TransactionTypeEnum.Investment:
-          // For income and investments, increase networth
-          await tx.user.update({
-            where: { id: userId },
-            data: {
-              networth: {
-                increment: amount,
-              },
-            },
-          });
-          break;
-        case TransactionTypeEnum.Expense:
-          // For expenses, decrease networth
-          await tx.user.update({
-            where: { id: userId },
-            data: {
-              networth: {
-                decrement: amount,
-              },
-            },
-          });
-          break;
-      }
-
       // if (data.assetId) {
       //   await handleAssetTransaction({
       //     assetId: data.assetId,
@@ -148,54 +117,6 @@ export class TransactionsService {
         }
       }
 
-      // Handle networth and account balance changes
-      // First, reverse the effect of old transaction
-      switch (oldTransaction.type) {
-        case TransactionTypeEnum.Income:
-        case TransactionTypeEnum.Investment:
-          // Reverse the addition to networth and account balance
-          await Promise.all([
-            tx.user.update({
-              where: { id: userId },
-              data: {
-                networth: {
-                  decrement: oldAmount,
-                },
-              },
-            }),
-            tx.account.update({
-              where: { id: oldTransaction.accountId },
-              data: {
-                balance: {
-                  decrement: oldAmount,
-                },
-              },
-            }),
-          ]);
-          break;
-        case TransactionTypeEnum.Expense:
-          // Reverse the reduction from networth and account balance
-          await Promise.all([
-            tx.user.update({
-              where: { id: userId },
-              data: {
-                networth: {
-                  increment: oldAmount,
-                },
-              },
-            }),
-            tx.account.update({
-              where: { id: oldTransaction.accountId },
-              data: {
-                balance: {
-                  increment: oldAmount,
-                },
-              },
-            }),
-          ]);
-          break;
-      }
-
       // Then apply the effect of new transaction type
       const newType = data.type || oldTransaction.type;
       const newAccountId = data.accountId || oldTransaction.accountId;
@@ -205,14 +126,6 @@ export class TransactionsService {
         case TransactionTypeEnum.Investment:
           // Add to networth and account balance
           await Promise.all([
-            tx.user.update({
-              where: { id: userId },
-              data: {
-                networth: {
-                  increment: newAmount,
-                },
-              },
-            }),
             tx.account.update({
               where: { id: newAccountId },
               data: {
@@ -226,14 +139,6 @@ export class TransactionsService {
         case TransactionTypeEnum.Expense:
           // Subtract from networth and account balance
           await Promise.all([
-            tx.user.update({
-              where: { id: userId },
-              data: {
-                networth: {
-                  decrement: newAmount,
-                },
-              },
-            }),
             tx.account.update({
               where: { id: newAccountId },
               data: {
@@ -287,34 +192,6 @@ export class TransactionsService {
           where: { id: transaction.accountId },
           data: { balance: updatedBalance },
         });
-
-        // Update networth based on transaction type
-        switch (transaction.type) {
-          case TransactionTypeEnum.Income:
-          case TransactionTypeEnum.Investment:
-            // Remove from networth
-            await tx.user.update({
-              where: { id: userId },
-              data: {
-                networth: {
-                  decrement: amount,
-                },
-              },
-            });
-            break;
-          case TransactionTypeEnum.Expense:
-            // Add back to networth
-            await tx.user.update({
-              where: { id: userId },
-              data: {
-                networth: {
-                  increment: amount,
-                },
-              },
-            });
-            break;
-        }
-
         // Reverse asset transaction if it exists
         // if (transaction.assetId) {
         //   await handleAssetTransaction({

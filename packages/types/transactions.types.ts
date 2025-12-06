@@ -14,9 +14,10 @@ export interface CreateTransactionDto {
   categoryId: string; // Changed from category: string
   note?: string;
   timestamp: Date;
+  isSystem?: boolean;
 }
 
-export type UpdateTransactionDto = CreateTransactionDto;
+export type UpdateTransactionDto = Partial<CreateTransactionDto>;
 
 export interface Transaction extends CreateTransactionDto {
   id: string;

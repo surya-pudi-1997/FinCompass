@@ -82,6 +82,7 @@ export class AssetsService {
             categoryId: investmentCategory.id,
             assetId: asset.id,
             timestamp: new Date(),
+            isSystem: true,
             note: `Automatic transaction created for buying ${data.name}`,
           },
         });
@@ -119,17 +120,6 @@ export class AssetsService {
             income: new Prisma.Decimal(data?.income || 0),
           },
         });
-
-        // Update networth directly
-        await tx.user.update({
-          where: { id: userId },
-          data: {
-            networth: {
-              increment: boughtValue,
-            },
-          },
-        });
-
         logger.info(
           `Asset created for user ${userId}: ${JSON.stringify(asset)}`
         );
@@ -231,16 +221,6 @@ export class AssetsService {
         updateData.bought_from = null;
         updateData.bought_value = newValue;
         updateData.is_existing = true;
-
-        // Update networth directly since no transaction exists now
-        await tx.user.update({
-          where: { id: userId },
-          data: {
-            networth: {
-              increment: newValue,
-            },
-          },
-        });
       }
       // Case 3: Asset didn't have transaction but will have one now
       else if (!oldAsset.bought_transaction && data.bought_from) {
@@ -261,14 +241,6 @@ export class AssetsService {
 
         // Remove old value from networth since it will be handled by transaction
         await Promise.all([
-          tx.user.update({
-            where: { id: userId },
-            data: {
-              networth: {
-                decrement: oldValue,
-              },
-            },
-          }),
           tx.account.update({
             where: { id: data.bought_from },
             data: {
@@ -287,6 +259,7 @@ export class AssetsService {
             amount: newValue,
             accountId: data.bought_from,
             categoryId: category.id,
+            isSystem: true,
             assetId: id,
             timestamp: new Date(),
             note: `Automatic transaction created for buying ${data.name || oldAsset.name}`,
@@ -304,15 +277,6 @@ export class AssetsService {
         !data.bought_from &&
         !oldValue.equals(newValue)
       ) {
-        // Update networth directly with the difference
-        await tx.user.update({
-          where: { id: userId },
-          data: {
-            networth: {
-              increment: newValue.sub(oldValue),
-            },
-          },
-        });
         updateData.bought_value = newValue;
       }
 
@@ -346,6 +310,7 @@ export class AssetsService {
               accountId: data.sold_to,
               categoryId: incomeCategory.id,
               assetId: id,
+              isSystem: true,
               timestamp: new Date(),
               note: `Automatic transaction created for selling ${oldAsset.name}`,
             },
@@ -366,18 +331,6 @@ export class AssetsService {
           updateData.sold_to = data.sold_to;
           updateData.sold_value = soldValue;
           updateData.sold_transaction = saleTransaction.id;
-
-          // If it wasn't a transaction-based asset, remove from networth
-          await tx.user.update({
-            where: { id: userId },
-            data: {
-              networth: {
-                increment: soldValue.minus(
-                  Prisma.Decimal(data.bought_value || 0)
-                ),
-              },
-            },
-          });
         }
         // Case 2: Asset was already sold and updating sold details
         else if (oldAsset.status === "Sold" && oldAsset.sold_transaction) {
@@ -405,29 +358,11 @@ export class AssetsService {
                 },
               });
 
-              await tx.user.update({
-                where: { id: userId },
-                data: {
-                  networth: {
-                    decrement: oldSaleTransaction.amount,
-                  },
-                },
-              });
-
               // Add money to new account
               await tx.account.update({
                 where: { id: data.sold_to || oldAsset.sold_to },
                 data: {
                   balance: {
-                    increment: newSoldValue,
-                  },
-                },
-              });
-
-              await tx.user.update({
-                where: { id: userId },
-                data: {
-                  networth: {
                     increment: newSoldValue,
                   },
                 },
@@ -474,16 +409,6 @@ export class AssetsService {
               data: {
                 balance: {
                   decrement: soldValue,
-                },
-              },
-            });
-
-            // Update networth by removing sold value and adding back bought value
-            await tx.user.update({
-              where: { id: userId },
-              data: {
-                networth: {
-                  increment: oldValue.sub(soldValue),
                 },
               },
             });
@@ -562,16 +487,6 @@ export class AssetsService {
             }),
           ]);
         }
-      } else if (asset.status === "Active") {
-        // If no transaction but asset is active, just update networth
-        await tx.user.update({
-          where: { id: userId },
-          data: {
-            networth: {
-              decrement: boughtValue,
-            },
-          },
-        });
       }
 
       // Finally delete the asset

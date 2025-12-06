@@ -55,7 +55,6 @@ const ACCOUNT_FORM_FIELDS = {
       placeholder: "Enter initial balance",
       validation: {
         required: true,
-        min: 0,
       },
     },
   ],

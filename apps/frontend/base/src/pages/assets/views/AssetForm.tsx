@@ -172,7 +172,8 @@ const AssetForm: React.FC<AssetFormProps> = ({
 
   useEffect(() => {
     if (accounts && accounts.length > 0) {
-      const temp = accounts
+      console.log({ accounts });
+      let temp = [...accounts]
         .sort((a, b) => {
           // Sort system accounts first, then alphabetically
           if (a.isSystem && !b.isSystem) return -1;
